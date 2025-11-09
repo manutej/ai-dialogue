@@ -1,0 +1,88 @@
+{
+  "name": "podcast",
+  "description": "Conversational exploration in podcast-style dialogue",
+  "structure": "sequential",
+  "turns": 10,
+  "participants": ["claude", "grok"],
+  "metadata": {
+    "use_case": "Accessible explanations, teaching, exploratory conversation",
+    "pattern": "Introduce → Expand → Question → Clarify → Insight → Explore → Challenge → Synthesize → Practical → Closing"
+  },
+  "prompts": {
+    "turn_1": {
+      "role": "introduction",
+      "participant": "claude",
+      "role_instruction": "You are the podcast host introducing the topic.",
+      "template": "Welcome to AI Dialogue podcast!\n\nToday's topic: {topic}\n\nAs the host, provide an engaging introduction:\n1. Why is this topic interesting/important right now?\n2. What will we explore in this conversation?\n3. What should listeners expect to learn?\n4. Set the tone - curious, accessible, thoughtful\n\nKeep it conversational and inviting (2-3 paragraphs).",
+      "context_from": []
+    },
+    "turn_2": {
+      "role": "expert_overview",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "role_instruction": "You are the expert guest providing an accessible overview.",
+      "template": "Host introduction:\n{turn_1}\n\nAs the expert guest, provide an accessible overview:\n1. Start with the fundamentals - what is this really about?\n2. Use analogies and examples to make it concrete\n3. Share what excites you about this topic\n4. Avoid jargon, or explain it when necessary\n5. Keep it conversational and engaging\n\nSpeak like you're explaining to a smart friend.",
+      "context_from": [1]
+    },
+    "turn_3": {
+      "role": "curious_questions",
+      "participant": "claude",
+      "role_instruction": "You are the host asking curious follow-up questions.",
+      "template": "Expert's overview:\n{turn_2}\n\nAs the host, ask 3-4 curious follow-up questions:\n1. Dig deeper into something intriguing mentioned\n2. Ask about real-world implications\n3. Question an assumption or ask for clarification\n4. Connect to something listeners might relate to\n\nBe genuinely curious. These questions guide the conversation.",
+      "context_from": [2]
+    },
+    "turn_4": {
+      "role": "deep_dive",
+      "participant": "grok",
+      "grok_model": "grok-4",
+      "role_instruction": "You are the expert responding to questions with deeper insight.",
+      "template": "Host's questions:\n{turn_3}\n\nRespond to each question thoughtfully:\n1. Provide concrete examples or stories\n2. Share nuances and complexities\n3. Acknowledge what we don't know\n4. Make connections between ideas\n\nKeep it accessible but don't oversimplify. Show depth.",
+      "context_from": [3]
+    },
+    "turn_5": {
+      "role": "insight_moment",
+      "participant": "claude",
+      "role_instruction": "You are the host having an 'aha' moment.",
+      "template": "Expert's deep dive:\n{turn_4}\n\nAs the host, share an insight or realization:\n1. What just clicked for you?\n2. How does this connect to something broader?\n3. What implication surprised you?\n4. Pose a new question this insight raises\n\nThis is a podcast 'moment' - make it feel natural.",
+      "context_from": [4]
+    },
+    "turn_6": {
+      "role": "explore_implications",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "role_instruction": "You are the expert exploring implications.",
+      "template": "Host's insight:\n{turn_5}\n\nExplore the implications:\n1. Where does this lead?\n2. What are the second-order effects?\n3. How might this play out in different domains?\n4. What should people be paying attention to?\n\nExpand the conversation outward.",
+      "context_from": [5]
+    },
+    "turn_7": {
+      "role": "devils_advocate",
+      "participant": "claude",
+      "role_instruction": "You are the host playing devil's advocate.",
+      "template": "So far we've heard:\n{turn_4}\n{turn_6}\n\nAs the host, challenge the narrative:\n1. What might skeptics say?\n2. What are we potentially overlooking?\n3. Where might this go wrong?\n4. What's the contrarian view?\n\nKeep it constructive - you're stress-testing ideas.",
+      "context_from": [4, 6]
+    },
+    "turn_8": {
+      "role": "balanced_response",
+      "participant": "grok",
+      "grok_model": "grok-4",
+      "role_instruction": "You are the expert providing balanced perspective.",
+      "template": "Host's challenges:\n{turn_7}\n\nProvide balanced response:\n1. Which concerns are valid?\n2. Where is there legitimate uncertainty?\n3. How do you weigh tradeoffs?\n4. What does the evidence actually support?\n\nBe intellectually honest. It's okay to say \"we don't know.\"",
+      "context_from": [7]
+    },
+    "turn_9": {
+      "role": "practical_takeaways",
+      "participant": "claude",
+      "role_instruction": "You are the host asking about practical takeaways.",
+      "template": "As we wind down:\n\nWhat should our listeners actually DO with this information?\n1. If they're professionals in this space?\n2. If they're curious learners?\n3. If they're making decisions related to this?\n4. What's the one thing to remember?\n\nMake it actionable.",
+      "context_from": [2, 4, 6, 8]
+    },
+    "turn_10": {
+      "role": "closing",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "role_instruction": "You are the expert providing closing thoughts.",
+      "template": "Host's request for practical takeaways:\n{turn_9}\n\nProvide closing thoughts:\n1. Key practical recommendations\n2. What to watch for in the future\n3. Resources or next steps for learning\n4. Final thought to leave listeners with\n\nEnd on an inspiring or thought-provoking note.",
+      "context_from": [9]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "name": "loop",
+  "description": "Sequential knowledge building through iterative loops",
+  "structure": "sequential",
+  "turns": 8,
+  "participants": ["claude", "grok"],
+  "metadata": {
+    "use_case": "Research, deep exploration, systematic knowledge building",
+    "pattern": "Foundation → Analysis → Synthesis → Integration",
+    "abstracted_from": "grok-consult categorical AI research protocol"
+  },
+  "prompts": {
+    "turn_1": {
+      "role": "foundation",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "template": "You are an expert establishing foundational concepts.\n\nTopic: {topic}\n\nProvide a comprehensive foundation covering:\n1. Core definitions and concepts\n2. Historical context and key developments\n3. Fundamental principles\n4. Current state of knowledge\n\nBe thorough but accessible. This will serve as the foundation for deeper exploration.",
+      "context_from": []
+    },
+    "turn_2": {
+      "role": "critical_analysis",
+      "participant": "claude",
+      "template": "Based on the foundation established:\n\n{turn_1}\n\nProvide critical analysis:\n1. Identify key assumptions and their validity\n2. Evaluate strengths and limitations\n3. Highlight areas of uncertainty or debate\n4. Suggest potential gaps or overlooked aspects\n\nBe rigorous and questioning.",
+      "context_from": [1]
+    },
+    "turn_3": {
+      "role": "empirical_evidence",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "template": "Building on the foundation and critical analysis:\n\nFoundation: {turn_1_participant} established core concepts\nAnalysis: {turn_2_participant} identified key questions\n\nNow provide empirical grounding:\n1. What evidence exists? (studies, data, implementations)\n2. What has been tested and validated?\n3. What are the benchmarks and results?\n4. What remains theoretical vs proven?\n\nFocus on facts and citations where possible.",
+      "context_from": [1, 2]
+    },
+    "turn_4": {
+      "role": "synthesis",
+      "participant": "claude",
+      "template": "Synthesize the exploration so far:\n\nFoundation: {turn_1}\n\nCritical Analysis: {turn_2}\n\nEmpirical Evidence: {turn_3}\n\nCreate an integrated understanding:\n1. What patterns emerge across all perspectives?\n2. How do theory and evidence align or conflict?\n3. What is the current consensus?\n4. What are the open questions?\n\nProvide a coherent synthesis.",
+      "context_from": [1, 2, 3]
+    },
+    "turn_5": {
+      "role": "practical_applications",
+      "participant": "grok",
+      "grok_model": "grok-4",
+      "template": "Given the synthesis:\n\n{turn_4}\n\nExplore practical applications:\n1. How is this applied in practice?\n2. What are real-world use cases?\n3. What tools, frameworks, or methodologies exist?\n4. What are the success stories and failures?\n5. What are the adoption barriers?\n\nFocus on actionable insights.",
+      "context_from": [4]
+    },
+    "turn_6": {
+      "role": "future_directions",
+      "participant": "claude",
+      "template": "Based on everything discussed:\n\nSynthesis: {turn_4}\nPractical Applications: {turn_5}\n\nExplore future directions:\n1. What are the most promising research directions?\n2. What breakthrough would have the most impact?\n3. What are the realistic timelines?\n4. What are the potential risks and challenges?\n5. Where should investment be focused?\n\nBalance ambition with realism.",
+      "context_from": [4, 5]
+    },
+    "turn_7": {
+      "role": "meta_reflection",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "template": "Reflect on the entire exploration:\n\nWe've covered:\n- Foundation (Turn 1)\n- Critical Analysis (Turn 2)\n- Empirical Evidence (Turn 3)\n- Synthesis (Turn 4)\n- Practical Applications (Turn 5)\n- Future Directions (Turn 6)\n\nMeta-reflection:\n1. What are the highest confidence insights?\n2. Where is there still uncertainty?\n3. What assumptions should be questioned?\n4. What did we miss or underexplore?\n5. How would you rate the overall epistemic quality?\n\nBe honest about limitations.",
+      "context_from": [1, 2, 3, 4, 5, 6]
+    },
+    "turn_8": {
+      "role": "final_integration",
+      "participant": "claude",
+      "template": "Final integration across all turns:\n\n{turn_1}\n{turn_2}\n{turn_3}\n{turn_4}\n{turn_5}\n{turn_6}\n{turn_7}\n\nProvide:\n1. Key takeaways (3-5 most important insights)\n2. Confidence levels for major claims\n3. Practical recommendations\n4. Research gaps and next steps\n5. Concise summary (2-3 paragraphs)\n\nThis is the definitive summary of our exploration.",
+      "context_from": [1, 2, 3, 4, 5, 6, 7]
+    }
+  }
+}

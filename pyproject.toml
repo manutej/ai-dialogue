@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-dialogue"
+version = "1.0.0"
+description = "Universal async AI orchestration protocol for Claude ↔ Grok interactions"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "LUXOR AI Systems"}
+]
+keywords = ["ai", "llm", "orchestration", "async", "claude", "grok", "dialogue"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "openai>=1.0.0",  # For Grok API (OpenAI-compatible)
+    "click>=8.0.0",   # CLI framework
+    "aiohttp>=3.9.0", # Async HTTP (used by openai)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+ai-dialogue = "cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/luxor-ai/ai-dialogue"
+Repository = "https://github.com/luxor-ai/ai-dialogue"
+Documentation = "https://github.com/luxor-ai/ai-dialogue#readme"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "cli*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311', 'py312']
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+select = ["E", "F", "W", "I", "N"]
+ignore = []

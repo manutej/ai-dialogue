@@ -1,0 +1,118 @@
+{
+  "name": "dynamic",
+  "description": "Adaptive workflow with dynamic task decomposition and loop generation",
+  "structure": "mixed",
+  "turns": 0,
+  "dynamic_generation": true,
+  "participants": ["claude", "grok"],
+  "metadata": {
+    "use_case": "Complex tasks requiring adaptive decomposition and execution",
+    "pattern": "Decompose → Assess Complexity → Generate Loops → Execute → Synthesize",
+    "supports_cycles": true,
+    "supports_nested_loops": true,
+    "template_variables": ["TASK", "SUBTASKS", "COMPLEXITY", "LOOP_STRATEGY"]
+  },
+  "phases": [
+    {
+      "name": "decomposition",
+      "type": "sequential",
+      "prompts": {
+        "turn_1": {
+          "role": "decomposer",
+          "participant": "claude",
+          "template": "**TASK DECOMPOSITION**\n\nPrimary Task: <TASK>\n\nAnalyze and decompose this task:\n\n1. **Task Analysis**\n   - What is the core objective?\n   - What are the major components?\n   - What dependencies exist between components?\n\n2. **Decomposition Strategy**\n   - Break down into logical subtasks\n   - Identify which subtasks can be handled independently\n   - Identify which subtasks require sequential processing\n\n3. **Complexity Assessment** (for each subtask)\n   - Simple (can be completed in one interaction)\n   - Moderate (needs 2-3 interactions)\n   - Complex (requires its own multi-step loop)\n\n4. **Recommended Approach**\n   Format your response as:\n   ```\n   SUBTASKS:\n   1. [Subtask name] - [Complexity: simple/moderate/complex]\n      Description: ...\n      Dependencies: ...\n   \n   2. [Subtask name] - [Complexity: simple/moderate/complex]\n      Description: ...\n      Dependencies: ...\n   \n   LOOP_STRATEGY: [single_loop | one_loop_per_task | mixed]\n   \n   REASONING: Why this approach?\n   ```\n\nBe thorough but practical. The goal is to create an execution plan.",
+          "context_from": [],
+          "extract_structured": true
+        },
+        "turn_2": {
+          "role": "complexity_assessor",
+          "participant": "grok",
+          "grok_model": "grok-4",
+          "template": "**COMPLEXITY ASSESSMENT & VALIDATION**\n\nProposed decomposition:\n{turn_1}\n\nValidate and refine:\n\n1. **Decomposition Review**\n   - Is the decomposition logical and complete?\n   - Are dependencies correctly identified?\n   - Are complexity ratings accurate?\n\n2. **Strategy Validation**\n   - Is the proposed LOOP_STRATEGY optimal?\n   - Should any subtasks be further decomposed?\n   - Should any subtasks be merged?\n\n3. **Resource Assessment**\n   - What resources/context needed for each subtask?\n   - Which subtasks need external research?\n   - Which can be handled with existing knowledge?\n\n4. **Final Recommendation**\n   Provide final structured output:\n   ```\n   VALIDATED_SUBTASKS:\n   [List refined subtasks with complexity]\n   \n   EXECUTION_PLAN:\n   - Strategy: [single_loop | one_loop_per_task | mixed]\n   - Estimated total interactions: X\n   - Parallel opportunities: [which subtasks can run in parallel]\n   \n   PROCEED: [yes/no]\n   IF_NO: [what needs refinement]\n   ```",
+          "context_from": [1],
+          "extract_structured": true,
+          "decision_point": true
+        }
+      }
+    },
+    {
+      "name": "execution",
+      "type": "dynamic",
+      "description": "Generated dynamically based on decomposition phase results",
+      "generation_instructions": {
+        "single_loop": {
+          "description": "All subtasks handled in one sequential loop",
+          "turns_per_subtask": 1,
+          "pattern": "For each subtask: Executor performs task → Reviewer validates → Next subtask"
+        },
+        "one_loop_per_task": {
+          "description": "Each complex subtask gets its own dedicated loop",
+          "turns_per_subtask": "dynamic",
+          "pattern": "For each subtask: Mini-loop (Research → Execute → Validate → Refine) → Synthesize → Next subtask"
+        },
+        "mixed": {
+          "description": "Simple subtasks in batch, complex subtasks get individual loops",
+          "turns_per_subtask": "variable",
+          "pattern": "Batch simple tasks → Loop for each complex task → Final synthesis"
+        }
+      },
+      "executor_template": "**SUBTASK EXECUTION: {subtask_name}**\n\nSubtask: {subtask_description}\nComplexity: {subtask_complexity}\nDependencies: {subtask_dependencies}\nContext: {subtask_context}\n\n**Execute this subtask:**\n\n1. **Understand Requirements**\n   - What exactly needs to be accomplished?\n   - What constraints or criteria apply?\n\n2. **Perform Task**\n   - {specific_execution_instructions}\n   - Provide concrete outputs, not just descriptions\n\n3. **Validate Results**\n   - Does this satisfy the subtask requirements?\n   - What quality checks can be applied?\n\n4. **Document Outputs**\n   - What are the deliverables?\n   - What context should pass to next step?\n\nProvide clear, actionable results.",
+      "validator_template": "**VALIDATION: {subtask_name}**\n\nExecution result:\n{execution_result}\n\nValidate:\n\n1. **Completeness**\n   - Was the subtask fully completed?\n   - What's missing or incomplete?\n\n2. **Quality**\n   - Does it meet requirements?\n   - Are there errors or issues?\n\n3. **Integration**\n   - Will this work with other subtasks?\n   - Are dependencies satisfied?\n\n4. **Decision**\n   ```\n   STATUS: [complete | needs_refinement | needs_rework]\n   ISSUES: [list any problems]\n   NEXT: [proceed | refine | restart]\n   ```",
+      "refiner_template": "**REFINEMENT: {subtask_name}**\n\nValidation feedback:\n{validation_feedback}\n\nRefine the execution:\n\n1. **Address Issues**\n   - Fix identified problems\n   - Improve quality\n\n2. **Enhanced Output**\n   - Provide improved version\n   - Explain changes made\n\n3. **Ready Check**\n   - Confirm readiness for integration"
+    },
+    {
+      "name": "synthesis",
+      "type": "sequential",
+      "prompts": {
+        "final_synthesis": {
+          "role": "synthesizer",
+          "participant": "claude",
+          "template": "**FINAL SYNTHESIS**\n\nOriginal Task: <TASK>\n\nAll subtask results:\n{all_subtask_results}\n\nSynthesize complete solution:\n\n1. **Integration**\n   - Combine all subtask results cohesively\n   - Resolve any conflicts or gaps\n   - Create unified output\n\n2. **Validation Against Original Task**\n   - Does this solve the original task?\n   - What requirements are met?\n   - What might be missing?\n\n3. **Quality Assessment**\n   - Strengths of the solution\n   - Limitations or caveats\n   - Confidence level\n\n4. **Deliverables**\n   - Provide complete, ready-to-use solution\n   - Include any necessary documentation\n   - Suggest next steps if applicable\n\n5. **Meta-Reflection**\n   - Was the decomposition strategy optimal?\n   - What worked well?\n   - What could be improved for similar tasks?\n\nProvide comprehensive, actionable results.",
+          "context_from": ["all_execution_turns"]
+        }
+      }
+    }
+  ],
+  "adaptive_rules": {
+    "simple_task_threshold": "If all subtasks are simple, use single_loop",
+    "complex_task_threshold": "If any subtask is complex, use one_loop_per_task for complex ones",
+    "max_iterations_per_subtask": 5,
+    "convergence_check": "After each subtask loop, check if requirements met",
+    "fallback_strategy": "If subtask fails after max_iterations, escalate to human"
+  },
+  "example_scenarios": {
+    "scenario_1": {
+      "task": "Build a simple CLI tool",
+      "expected_decomposition": [
+        "Design CLI interface (simple)",
+        "Implement core logic (moderate)",
+        "Add error handling (simple)",
+        "Write tests (simple)"
+      ],
+      "expected_strategy": "single_loop",
+      "estimated_turns": 6
+    },
+    "scenario_2": {
+      "task": "Design and implement distributed system",
+      "expected_decomposition": [
+        "Architecture design (complex)",
+        "Component specification (complex)",
+        "Implementation plan (moderate)",
+        "Testing strategy (moderate)"
+      ],
+      "expected_strategy": "one_loop_per_task",
+      "estimated_turns": 20
+    },
+    "scenario_3": {
+      "task": "Optimize existing codebase",
+      "expected_decomposition": [
+        "Profile and identify bottlenecks (moderate)",
+        "Optimize critical paths (complex)",
+        "Add caching (simple)",
+        "Benchmark improvements (simple)"
+      ],
+      "expected_strategy": "mixed",
+      "estimated_turns": 12
+    }
+  }
+}

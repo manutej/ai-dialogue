@@ -1,0 +1,61 @@
+{
+  "name": "pipeline",
+  "description": "Static process pipeline with defined stages",
+  "structure": "sequential",
+  "turns": 7,
+  "participants": ["claude", "grok"],
+  "metadata": {
+    "use_case": "Systematic task completion through defined stages",
+    "pattern": "Research → Synthesize → Extract → Distill → Explore → Spec → Plan",
+    "supports_cycles": true,
+    "template_variables": ["TASK", "CYCLE", "PREVIOUS_CYCLE_SUMMARY"]
+  },
+  "prompts": {
+    "turn_1": {
+      "role": "research",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "template": "**RESEARCH PHASE**\n\nTask: <TASK>\nCycle: <CYCLE>\n\nConduct comprehensive research:\n\n1. **Background Research**\n   - What exists in this domain?\n   - What are the key concepts and terminology?\n   - What prior art or related work exists?\n\n2. **Current State Analysis**\n   - What is the current state of the art?\n   - What approaches have been tried?\n   - What are known challenges and limitations?\n\n3. **Knowledge Gaps**\n   - What is unknown or uncertain?\n   - Where is more information needed?\n   - What assumptions need validation?\n\n4. **Resource Identification**\n   - What tools, frameworks, or libraries exist?\n   - What documentation or references are available?\n   - What expertise would be valuable?\n\nProvide thorough research with citations where possible. Focus on facts and evidence.",
+      "context_from": []
+    },
+    "turn_2": {
+      "role": "synthesize",
+      "participant": "claude",
+      "template": "**SYNTHESIS PHASE**\n\nResearch completed:\n{turn_1}\n\nSynthesize findings:\n\n1. **Pattern Recognition**\n   - What common themes emerge from research?\n   - What connections exist between different findings?\n   - What contradictions or tensions exist?\n\n2. **Framework Development**\n   - How can we organize this information?\n   - What mental model or framework fits?\n   - What are the key dimensions or categories?\n\n3. **Insight Generation**\n   - What non-obvious insights emerge?\n   - What implications follow from the research?\n   - What hypotheses can we form?\n\n4. **Integrated Understanding**\n   - Create a coherent narrative from research\n   - Identify the most important takeaways\n   - Highlight areas of confidence vs uncertainty\n\nProvide structured synthesis with clear organization.",
+      "context_from": [1]
+    },
+    "turn_3": {
+      "role": "extract",
+      "participant": "grok",
+      "grok_model": "grok-4",
+      "template": "**EXTRACTION PHASE**\n\nTask: <TASK>\nSynthesis: {turn_2}\n\nExtract relevant portions for task completion:\n\n1. **Task-Relevant Information**\n   - What from the synthesis directly applies to <TASK>?\n   - What information is critical vs nice-to-have?\n   - What can be safely ignored or deprioritized?\n\n2. **Requirements Extraction**\n   - What functional requirements emerge?\n   - What non-functional requirements exist?\n   - What constraints must be respected?\n\n3. **Success Criteria**\n   - How will we know if we've succeeded?\n   - What metrics or indicators matter?\n   - What does \"good enough\" look like?\n\n4. **Risk Identification**\n   - What could go wrong?\n   - What assumptions are critical?\n   - What dependencies exist?\n\nFocus on actionable information. Be selective and practical.",
+      "context_from": [2]
+    },
+    "turn_4": {
+      "role": "distill",
+      "participant": "claude",
+      "template": "**DISTILLATION PHASE**\n\nExtracted information:\n{turn_3}\n\nDistill to essential insights:\n\n1. **Core Principles** (3-5 key principles)\n   - What are the fundamental truths?\n   - What principles should guide decisions?\n   - What heuristics or rules of thumb apply?\n\n2. **Critical Path** (priority sequence)\n   - What must happen first?\n   - What depends on what?\n   - What can be parallelized?\n\n3. **Key Decisions** (major choices to make)\n   - What architectural/design decisions matter most?\n   - What tradeoffs will we face?\n   - What should we decide now vs later?\n\n4. **Essence Summary** (2-3 paragraphs)\n   - Distill everything to its essence\n   - What is the simplest path to success?\n   - What is the minimum viable approach?\n\nBe ruthlessly concise. Clarity over completeness.",
+      "context_from": [3]
+    },
+    "turn_5": {
+      "role": "functional_exploration",
+      "participant": "grok",
+      "grok_model": "grok-4",
+      "template": "**FUNCTIONAL UTILITY EXPLORATION**\n\nTask: <TASK>\nDistilled insights: {turn_4}\n\nExplore functional utility approaches:\n\n1. **Implementation Patterns**\n   - What implementation patterns fit this task?\n   - What architectural styles are appropriate?\n   - What existing patterns can we leverage?\n\n2. **Component Breakdown**\n   - What are the logical components?\n   - How do components interact?\n   - What interfaces are needed?\n\n3. **Technology Evaluation**\n   - What technologies/frameworks fit best?\n   - What are the tradeoffs between options?\n   - What should we use and why?\n\n4. **Feasibility Assessment**\n   - What is definitely feasible?\n   - What is risky or uncertain?\n   - What should we prototype or validate?\n\nFocus on practical implementation approaches. Be specific about recommendations.",
+      "context_from": [4]
+    },
+    "turn_6": {
+      "role": "specification",
+      "participant": "claude",
+      "template": "**SPECIFICATION PHASE**\n\nTask: <TASK>\nFunctional exploration: {turn_5}\n\nCreate final specification:\n\n1. **Objectives** (clear, measurable)\n   - What exactly will be built?\n   - What are the acceptance criteria?\n   - What defines success?\n\n2. **Architecture** (components, interfaces, data flow)\n   - System architecture diagram (in text)\n   - Component responsibilities\n   - Integration points\n\n3. **Technical Specification**\n   - Technology stack\n   - Key algorithms or approaches\n   - Performance targets\n   - Security/reliability considerations\n\n4. **Constraints & Assumptions**\n   - What are the boundaries?\n   - What assumptions are we making?\n   - What is explicitly out of scope?\n\n5. **Risks & Mitigation**\n   - What are the top risks?\n   - How will we mitigate them?\n   - What are the fallback options?\n\nProvide a complete, unambiguous specification ready for implementation.",
+      "context_from": [5]
+    },
+    "turn_7": {
+      "role": "development_plan",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "template": "**DEVELOPMENT PLAN & NEXT STEPS**\n\nSpecification: {turn_6}\n\nCreate actionable development plan:\n\n1. **Implementation Phases** (break into stages)\n   - Phase 1: Foundation (what must be built first)\n   - Phase 2: Core functionality (essential features)\n   - Phase 3: Integration & testing\n   - Phase 4: Deployment & validation\n\n2. **Task Breakdown** (specific, actionable tasks)\n   - For each phase, list concrete tasks\n   - Estimate effort (small/medium/large)\n   - Identify dependencies\n\n3. **Resource Requirements**\n   - What skills/expertise needed?\n   - What tools or infrastructure?\n   - What documentation or support?\n\n4. **Timeline Estimate** (realistic)\n   - How long for each phase?\n   - What's the critical path?\n   - What can be parallelized?\n\n5. **Immediate Next Steps** (first 3-5 actions)\n   - What should happen in the next hour/day/week?\n   - Who should do what?\n   - What decisions need to be made?\n\n6. **Success Metrics & Validation**\n   - How will we track progress?\n   - What milestones mark success?\n   - How will we know when each phase is complete?\n\nProvide a clear, actionable roadmap. Be specific and practical.\n\n---\n\n**CYCLE COMPLETE**\n\nIf cycles enabled:\n- Review results and decide if another cycle needed\n- Identify what to improve or expand in next cycle\n- Check if convergence reached or continue refining",
+      "context_from": [6]
+    }
+  }
+}

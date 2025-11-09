@@ -1,0 +1,58 @@
+{
+  "name": "debate",
+  "description": "Adversarial exploration of different positions",
+  "structure": "sequential",
+  "turns": 6,
+  "participants": ["claude", "grok"],
+  "metadata": {
+    "use_case": "Exploring tradeoffs, evaluating options, finding weaknesses",
+    "pattern": "Proposition → Opposition → Defense → Rebuttal → Synthesis → Verdict"
+  },
+  "prompts": {
+    "turn_1": {
+      "role": "proposition",
+      "participant": "claude",
+      "role_instruction": "You are arguing FOR the proposition. Present the strongest case possible.",
+      "template": "Topic: {topic}\n\nPresent a compelling argument FOR this position:\n1. State the core thesis clearly\n2. Provide strongest supporting arguments (3-5 key points)\n3. Cite evidence, examples, and reasoning\n4. Anticipate and preempt obvious counterarguments\n5. Conclude with why this position should be adopted\n\nMake the best case possible. Be persuasive but intellectually honest.",
+      "context_from": []
+    },
+    "turn_2": {
+      "role": "opposition",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "role_instruction": "You are arguing AGAINST the proposition. Present the strongest counterarguments.",
+      "template": "Proposition presented:\n\n{turn_1}\n\nPresent a compelling argument AGAINST this position:\n1. Identify core weaknesses in the proposition\n2. Provide strongest counterarguments (3-5 key points)\n3. Challenge assumptions and evidence\n4. Present alternative perspectives or approaches\n5. Explain why the proposition should be rejected or modified\n\nFocus on substantive critique. Be rigorous and fair.",
+      "context_from": [1]
+    },
+    "turn_3": {
+      "role": "defense",
+      "participant": "claude",
+      "role_instruction": "You are defending the original proposition against counterarguments.",
+      "template": "Original proposition:\n{turn_1}\n\nCounterarguments received:\n{turn_2}\n\nDefend the proposition:\n1. Address each major counterargument specifically\n2. Clarify misunderstandings or mischaracterizations\n3. Strengthen weak points identified\n4. Provide additional evidence or reasoning\n5. Acknowledge valid criticisms and refine position if needed\n\nBe responsive to the specific critiques raised.",
+      "context_from": [1, 2]
+    },
+    "turn_4": {
+      "role": "rebuttal",
+      "participant": "grok",
+      "grok_model": "grok-4",
+      "role_instruction": "You are providing final rebuttal to the defense.",
+      "template": "Proposition: {turn_1_participant} argued FOR\nOpposition: You previously argued AGAINST\nDefense: {turn_3}\n\nProvide final rebuttal:\n1. Evaluate whether defense adequately addressed concerns\n2. Identify remaining or new weaknesses\n3. Assess refined position vs original\n4. Present final arguments against (or concessions if defense was strong)\n5. State whether opposition position should stand\n\nBe fair but uncompromising on substantive issues.",
+      "context_from": [1, 2, 3]
+    },
+    "turn_5": {
+      "role": "synthesis",
+      "participant": "claude",
+      "role_instruction": "You are synthesizing both positions objectively.",
+      "template": "Full debate:\n\nProposition: {turn_1}\nOpposition: {turn_2}\nDefense: {turn_3}\nRebuttal: {turn_4}\n\nProvide objective synthesis:\n1. What are the strongest points on each side?\n2. Where is there common ground or agreement?\n3. What are the irreconcilable differences?\n4. What factors would determine which position is better?\n5. What nuances or middle positions emerge?\n\nBe balanced and analytical, not advocating for either side.",
+      "context_from": [1, 2, 3, 4]
+    },
+    "turn_6": {
+      "role": "verdict",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "role_instruction": "You are rendering a verdict based on the debate.",
+      "template": "Complete debate record:\n{turn_1}\n{turn_2}\n{turn_3}\n{turn_4}\n\nSynthesis: {turn_5}\n\nRender verdict:\n1. Which side presented the stronger overall case?\n2. What were the decisive factors?\n3. What valid points did the losing side make?\n4. What is the recommended position/action?\n5. What uncertainties remain?\n\nBe clear about confidence level and reasoning.",
+      "context_from": [1, 2, 3, 4, 5]
+    }
+  }
+}
