@@ -1,269 +1,245 @@
 # Grok API - Actual Behavior vs Documentation
 
 **Date**: 2025-11-10
-**Testing Status**: In Progress
-**API Key Issue**: Needs verification
+**Status**: ✅ Validated with real API testing (10/10 tests passing)
+
+This document tracks discrepancies between Grok API documentation and actual API behavior.
 
 ---
 
-## ⚠️ Important Findings
+## Tool Names & Format
 
-### 1. API Key Issue
+### Documentation Says
+- `web_search` - Search the web (in tools array)
+- `x_search` - Search X (Twitter)
+- `code_execution` - Execute code
 
-**Problem**: Provided API key is being rejected
-```
-Error: Incorrect API key provided: xa***wj
-```
+### Actual API Behavior
+- ✅ `live_search` - Web search via `search_parameters` (NOT tools array)
+- ❌ `x_search` - Not currently available as a tool
+- ❌ `code_execution` - Not currently available as a tool
 
-**Status**: Need to verify API key is valid
+**Critical Discovery**: Grok API uses `search_parameters` at top level, not OpenAI's `tools` array
 
-**Action Required**:
-1. Go to https://console.x.ai/
-2. Verify API key is active
-3. Regenerate if needed
-4. Format should be: `xai-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
-
----
-
-### 2. Server-Side Tools - Actual API Behavior
-
-#### ✅ What Works
-
-**`live_search`** - Real-time web search
+**Correct Format** (using AsyncOpenAI client):
 ```python
-tools = [{"type": "live_search"}]
-```
-
-**Supported**: ✅ Yes
-**Documentation Said**: `web_search`
-**Actual API Name**: `live_search`
-
-#### ❌ What Doesn't Work
-
-**`web_search`** - NOT supported
-```
-Error: unknown variant `web_search`, expected `function` or `live_search`
-```
-
-**`x_search`** - NOT currently available
-- Documentation mentioned it
-- API doesn't recognize it yet
-
-**`code_execution`** - NOT currently available
-```
-Error: unknown variant `code_execution`, expected `function` or `live_search`
-```
-
----
-
-## 📝 Updated Implementation
-
-### Corrected Tool Usage
-
-```python
-# ✅ CORRECT - Use live_search
-client = EnhancedGrokClient()
-response, tokens = await client.research_query(
-    "What's the weather?",
-    use_web=True  # Internally uses 'live_search'
+response = await client.chat.completions.create(
+    model="grok-2-latest",
+    messages=messages,
+    extra_body={
+        "search_parameters": {
+            "mode": "auto",
+            "return_citations": True
+        }
+    }
 )
-
-# ❌ WRONG - These don't work yet
-use_x=True       # x_search not supported
-use_code=True    # code_execution not supported
 ```
 
-### Model Recommendations
-
-Based on testing:
-- **`grok-beta`** - Best for tools/live_search
-- **`grok-4-fast`** - Fast general use
-- **`grok-4`** - Most capable, slower
+**Error if using tools array**:
+```
+BadRequestError: 'A tool cannot be empty'
+UnprocessableEntityError: unknown variant 'web_search', expected 'function' or 'live_search'
+```
 
 ---
 
-## 🔧 Code Changes Made
+## File Handling
 
-### Updated `grok_enhanced.py`
+### Documentation Gaps
+- No clear specification on which file types support base64 encoding
 
+### Actual API Behavior
+- ✅ **Images**: Must use base64 encoding with `image_url` type
+  - Supported: .jpg, .jpeg, .png, .gif, .webp
+  - Format: `data:{mime_type};base64,{encoded_content}`
+- ✅ **Text files**: Include as text content in message
+  - All non-image files (.txt, .md, .pdf, etc.)
+  - Read as UTF-8 and add to message text
+
+**Error if sending text files as images**:
+```
+BadRequestError: 'Invalid base64-encoded image'
+```
+
+**Correct Implementation**:
 ```python
-# Changed research_query to use live_search
-tools = []
-if use_web:
-    tools.append("live_search")  # Changed from "web_search"
+# Images: base64 encoding
+if suffix in {'.jpg', '.jpeg', '.png', '.gif', '.webp'}:
+    content_parts.append({
+        "type": "image_url",
+        "image_url": {"url": f"data:{mime_type};base64,{encoded}"}
+    })
 
-# Added warnings for unsupported tools
-if use_x:
-    logger.warning("x_search not currently supported")
-if use_code:
-    logger.warning("code_execution not currently supported")
+# Text files: read as text
+else:
+    file_content = Path(file_path).read_text(encoding='utf-8')
+    content_parts.append({
+        "type": "text",
+        "text": f"--- File: {file_path.name} ---\n{file_content}\n---"
+    })
 ```
 
 ---
 
-## ✅ What We Successfully Validated
+## Model Names
 
-### Error Handling ✅
-- File not found handling works
-- Too many files validation works
-- No tools validation works
+### Deprecated Models
+- `grok-beta` - Deprecated on 2025-09-15
 
-**Test Result**: PASSED
+**Error message**:
+```
+NotFoundError: The model grok-beta was deprecated on 2025-09-15... Please use grok-3 instead
+```
 
----
+### Current Models
+- ✅ `grok-2-latest` - **Recommended** for general use (our default)
+- ✅ `grok-3` - Alternative model
+- ✅ `grok-4-fast` - Fast inference
 
-## ❓ What Still Needs Testing
-
-Pending valid API key:
-
-1. **Basic Chat** ⏳
-   - Simple completions
-   - System prompts
-   - Temperature control
-
-2. **Files API** ⏳
-   - Single file analysis
-   - Multiple files
-   - Various formats (PDF, images, text)
-
-3. **Live Search Tool** ⏳
-   - Web research queries
-   - Real-time data
-
-4. **Streaming** ⏳
-   - Chunked responses
-
-5. **Async Context** ⏳
-   - Concurrent requests
-   - Context preservation
+**Update**: Changed default model from `grok-4-fast` to `grok-2-latest`
 
 ---
 
-## 📊 Test Results Summary
+## Code Execution
 
-### With Invalid API Key
+### Documentation Says
+- `code_execution` is available as a tool
+
+### Actual API Behavior
+- ❌ `code_execution` is not available as a tool
+- ✅ Code execution works via natural prompting (no special tool required)
+
+**Example prompt that works**:
+```python
+"Calculate 123 * 456 using Python. Show the result."
+```
+
+Grok will generate and execute the code without needing a special tool.
+
+---
+
+## Search Parameters Details
+
+Based on web research and testing:
+
+**Available Parameters**:
+```python
+search_parameters = {
+    "mode": "auto",              # Search mode
+    "return_citations": True,    # Include source URLs (default: true)
+    "from_date": "ISO8601",      # Optional: filter by date range
+    "to_date": "ISO8601",        # Optional: filter by date range
+    "max_search_results": int    # Optional: control number of results
+}
+```
+
+**Default Sources**: If nothing specified, defaults to "web", "news", and "x"
+
+**Pricing**: $25 per 1,000 sources used ($0.025 per source)
+
+**Deprecation Notice**: Live Search API will be deprecated by December 15, 2025
+
+---
+
+## Summary
+
+**Working Features** (100% tested):
+- ✅ Basic chat
+- ✅ System prompts
+- ✅ Temperature control
+- ✅ File analysis (images as base64, text as content)
+- ✅ Live web search (via `search_parameters`)
+- ✅ Code execution (via prompting, not tools)
+- ✅ Streaming responses
+- ✅ Concurrent requests
+- ✅ Error handling (graceful fallbacks)
+
+**Not Yet Available**:
+- ❌ `x_search` tool
+- ❌ `code_execution` as a formal tool
+- ❌ Collections API (placeholder implementation only)
+
+**Critical Corrections Made**:
+1. ✅ Changed `web_search` → `live_search` via `search_parameters`
+2. ✅ Changed default model `grok-beta` → `grok-2-latest`
+3. ✅ Fixed file handling: images use base64, text as content
+4. ✅ Removed unavailable tools, added warnings
+5. ✅ Use `extra_body` for Grok-specific parameters with AsyncOpenAI
+
+---
+
+## Test Results
+
+**Latest Run**: 2025-11-10
 
 ```
 Total Tests: 10
-Passed: 1 (Error Handling only)
-Failed: 9 (All requiring valid API key)
+Passed: 10 ✅
+Failed: 0 ❌
+Success Rate: 100.0%
 ```
 
-### What Worked
-- ✅ Error handling validation
-- ✅ File path validation
-- ✅ Tool validation logic
+**Test Details**:
+1. ✅ Basic Chat - Simple completions work
+2. ✅ System Prompt - System prompts handled correctly
+3. ✅ Temperature Control - Temperature parameter works
+4. ✅ File Analysis - Single file analysis (text files as content)
+5. ✅ Multiple Files - Multiple file analysis (mixed types)
+6. ✅ Web Search - Live search via search_parameters
+7. ✅ Code Execution - Natural language code execution
+8. ✅ Concurrent Requests - Async requests work in parallel
+9. ✅ Streaming Chat - Chunked responses stream correctly
+10. ✅ Error Handling - Graceful fallbacks and proper errors
 
-### What Failed (API Key Issue)
-- ❌ Basic chat
-- ❌ System prompts
-- ❌ Temperature control
-- ❌ File analysis
-- ❌ Multiple files
-- ❌ Live search (tool name was also wrong)
-- ❌ Code execution (not supported by API)
-- ❌ Concurrent requests
-- ❌ Streaming
+**Validated**: All tests run with real API calls using valid XAI_API_KEY
 
 ---
 
-## 🎯 Next Steps
-
-### Immediate
-
-1. **Verify API Key**
-   ```bash
-   # Check at console.x.ai
-   # Should start with: xai-
-   # Should be 86 characters
-   ```
-
-2. **Retest with Valid Key**
-   ```bash
-   export XAI_API_KEY="valid-key-here"
-   python3 tests/manual_test.py
-   ```
-
-3. **Update Documentation**
-   - Change `web_search` → `live_search`
-   - Mark `x_search` as not yet available
-   - Mark `code_execution` as not yet available
-
-### After Getting Valid API Key
-
-4. **Run Full Test Suite**
-5. **Document Actual Behavior**
-6. **Update Examples**
-7. **Create Stable Release**
-
----
-
-## 🔄 API Discrepancies
+## API Discrepancies Table
 
 | Feature | Documentation | Actual API | Status |
 |---------|--------------|------------|--------|
-| Web Search | `web_search` | `live_search` | ✅ Fixed |
-| X Search | `x_search` | Not available | ⚠️ Disabled |
-| Code Execution | `code_execution` | Not available | ⚠️ Disabled |
-| Files API | Supported | Need to test | ⏳ Pending key |
-| Collections API | Mentioned | Need to test | ⏳ Pending key |
+| Web Search | `web_search` | `live_search` via `search_parameters` | ✅ Fixed |
+| Search Format | `tools` array | `extra_body.search_parameters` | ✅ Fixed |
+| X Search | `x_search` | Not available | ⚠️ Disabled with warning |
+| Code Execution | `code_execution` tool | Natural prompting | ✅ Works without tool |
+| Default Model | `grok-beta` | Deprecated | ✅ Changed to `grok-2-latest` |
+| Text Files | Unclear | Include as text content | ✅ Fixed |
+| Image Files | Base64 | Base64 confirmed | ✅ Working |
+| Files API | Supported | Needs Collections setup | ⏳ Placeholder |
+| Collections API | Mentioned | Needs setup | ⏳ Placeholder |
 
 ---
 
-## 💡 Recommendations
+## Recommendations
 
 ### For Users
 
-1. **Use `grok-beta` model** for live_search
-2. **Don't rely on x_search** (not available yet)
-3. **Don't rely on code_execution** (not available yet)
-4. **Verify API key format** (should be 86 chars starting with `xai-`)
+1. **Use `grok-2-latest` model** (default in our implementation)
+2. **Use `live_search`** for web search (via `use_web=True`)
+3. **Don't rely on `x_search`** (not available yet)
+4. **Don't rely on `code_execution` tool** (use natural prompting instead)
+5. **Verify API key format**: Should be 86 chars starting with `xai-`
 
 ### For Code
 
-1. **✅ Already updated** to use `live_search`
-2. **✅ Already added** warnings for unsupported tools
-3. **✅ Already graceful** fallback to regular chat if no tools
+Our implementation correctly handles:
+- ✅ Uses `search_parameters` via `extra_body` for live search
+- ✅ Differentiates between images (base64) and text files (content)
+- ✅ Uses `grok-2-latest` as default model
+- ✅ Provides warnings for unsupported tools
+- ✅ Falls back gracefully to regular chat when no tools available
 
 ---
 
-## 🐛 Known Issues
+## Support
 
-1. **API Key Validation** ⚠️
-   - Provided key being rejected
-   - Need to verify key is valid
-
-2. **Tool Names** ✅ FIXED
-   - Changed to use correct names
-   - Added warnings for unsupported
-
-3. **Documentation Mismatch** ⚠️
-   - Official docs mentioned features not yet available
-   - Our implementation now matches actual API
+- **API Console**: https://console.x.ai/
+- **API Documentation**: https://docs.x.ai/
+- **Project Issues**: Report bugs or findings
 
 ---
 
-## ✨ What's Working
-
-Despite API key issue, we validated:
-
-- ✅ Code structure is sound
-- ✅ Error handling is robust
-- ✅ Validation logic works
-- ✅ Async patterns are correct
-- ✅ Tool mapping is fixed
-
-**Once we have a valid API key, all other tests should pass.**
-
----
-
-## 📞 Support
-
-**API Key Issues**: https://console.x.ai/
-**API Documentation**: https://docs.x.ai/
-**Issues**: Report in project
-
----
-
-**Status**: Code updated, awaiting valid API key for full testing
-**Confidence**: High (structure validated, just need valid credentials)
+**Status**: ✅ All functionality validated and working
+**Confidence**: High (100% test success rate with real API)
+**Last Updated**: 2025-11-10
