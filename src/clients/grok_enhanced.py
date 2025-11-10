@@ -311,28 +311,38 @@ class EnhancedGrokClient:
 
         Args:
             query: Research query
-            use_web: Enable web search
-            use_x: Enable X (Twitter) search
-            use_code: Enable code execution
-            model: Model to use (default: grok-4-fast, optimized for tools)
+            use_web: Enable web search (live_search)
+            use_x: Enable X (Twitter) search (not currently supported)
+            use_code: Enable code execution (not currently supported)
+            model: Model to use (default: grok-beta, optimized for tools)
 
         Returns:
             (research_result, token_usage)
+
+        Note: Based on actual API behavior, only 'live_search' is supported.
         """
         tools = []
         if use_web:
-            tools.append("web_search")
+            tools.append("live_search")  # Actual API name is 'live_search'
+
+        # x_search and code_execution not currently supported by API
         if use_x:
-            tools.append("x_search")
+            logger.warning("x_search not currently supported by Grok API, ignoring")
         if use_code:
-            tools.append("code_execution")
+            logger.warning("code_execution not currently supported by Grok API, ignoring")
 
         if not tools:
-            raise ValueError("At least one tool must be enabled")
+            # If no supported tools, just do regular chat
+            logger.info("No supported tools enabled, using regular chat")
+            return await self.chat(
+                prompt=query,
+                model=model or "grok-beta",
+                temperature=0.3
+            )
 
         return await self.chat(
             prompt=query,
-            model=model or "grok-4-fast",  # Optimized for agentic tool use
+            model=model or "grok-beta",  # Use grok-beta for tool use
             server_side_tools=tools,
             temperature=0.3  # Lower temperature for research
         )
