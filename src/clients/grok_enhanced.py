@@ -33,7 +33,7 @@ class EnhancedGrokClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "grok-2-latest"
+        model: str = "grok-4-fast-reasoning"
     ):
         self.api_key = api_key or os.environ.get("XAI_API_KEY")
         if not self.api_key:
@@ -334,7 +334,7 @@ class EnhancedGrokClient:
             use_web: Enable web search (live_search)
             use_x: Enable X (Twitter) search (not currently supported)
             use_code: Enable code execution (not currently supported)
-            model: Model to use (default: grok-2-latest)
+            model: Model to use (default: grok-4-fast-reasoning)
 
         Returns:
             (research_result, token_usage)
