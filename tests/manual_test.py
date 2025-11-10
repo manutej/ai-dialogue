@@ -251,18 +251,16 @@ async def test_error_handling(client):
         assert "10 files" in str(e)
         print("✓ ValueError correctly raised for too many files")
 
-    # Test no tools enabled
-    try:
-        await client.research_query(
-            "Test",
-            use_web=False,
-            use_x=False,
-            use_code=False
-        )
-        assert False, "Should raise ValueError for no tools"
-    except ValueError as e:
-        assert "tool" in str(e).lower()
-        print("✓ ValueError correctly raised for no tools enabled")
+    # Test no tools enabled - should fall back to regular chat
+    response, tokens = await client.research_query(
+        "Say 'Test response'",
+        use_web=False,
+        use_x=False,
+        use_code=False
+    )
+    assert isinstance(response, str)
+    assert len(response) > 0
+    print("✓ No tools enabled correctly falls back to regular chat")
 
 
 def main():

@@ -33,7 +33,7 @@ class EnhancedGrokClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "grok-4-fast"
+        model: str = "grok-2-latest"
     ):
         self.api_key = api_key or os.environ.get("XAI_API_KEY")
         if not self.api_key:
@@ -98,53 +98,73 @@ class EnhancedGrokClient:
             content_parts = [{"type": "text", "text": prompt}]
 
             for file_path in files:
-                file_content = Path(file_path).read_bytes()
-                encoded = base64.b64encode(file_content).decode('utf-8')
-
-                # Determine MIME type
                 suffix = Path(file_path).suffix.lower()
-                mime_types = {
-                    '.jpg': 'image/jpeg',
-                    '.jpeg': 'image/jpeg',
-                    '.png': 'image/png',
-                    '.gif': 'image/gif',
-                    '.webp': 'image/webp',
-                    '.pdf': 'application/pdf',
-                    '.txt': 'text/plain',
-                    '.csv': 'text/csv',
-                    '.md': 'text/markdown',
-                }
-                mime_type = mime_types.get(suffix, 'application/octet-stream')
 
-                content_parts.append({
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:{mime_type};base64,{encoded}"
+                # Only images support base64 encoding in Grok API
+                image_formats = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+
+                if suffix in image_formats:
+                    # Handle as image
+                    file_content = Path(file_path).read_bytes()
+                    encoded = base64.b64encode(file_content).decode('utf-8')
+
+                    mime_types = {
+                        '.jpg': 'image/jpeg',
+                        '.jpeg': 'image/jpeg',
+                        '.png': 'image/png',
+                        '.gif': 'image/gif',
+                        '.webp': 'image/webp',
                     }
-                })
+                    mime_type = mime_types[suffix]
+
+                    content_parts.append({
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{encoded}"
+                        }
+                    })
+                else:
+                    # Handle as text - read and include in prompt
+                    try:
+                        file_content = Path(file_path).read_text(encoding='utf-8')
+                        content_parts.append({
+                            "type": "text",
+                            "text": f"\n\n--- File: {Path(file_path).name} ---\n{file_content}\n--- End of file ---\n"
+                        })
+                    except UnicodeDecodeError:
+                        logger.warning(f"Could not read {file_path} as text, skipping")
 
             messages.append({"role": "user", "content": content_parts})
         else:
             messages.append({"role": "user", "content": prompt})
 
-        # Build tools list
-        tools = None
-        if server_side_tools:
-            tools = [{"type": tool} for tool in server_side_tools]
+        # Build search_parameters for live_search (Grok-specific)
+        search_parameters = None
+        if server_side_tools and "live_search" in server_side_tools:
+            search_parameters = {
+                "mode": "auto",
+                "return_citations": True
+            }
 
         logger.debug(
             f"Grok request: model={use_model}, temp={temperature}, "
-            f"files={len(files) if files else 0}, tools={server_side_tools}"
+            f"files={len(files) if files else 0}, search={search_parameters is not None}"
         )
 
         try:
-            response = await self.client.chat.completions.create(
-                model=use_model,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                tools=tools
-            )
+            # Prepare kwargs for API call
+            api_kwargs = {
+                "model": use_model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": max_tokens
+            }
+
+            # Add search_parameters if live_search is requested
+            if search_parameters:
+                api_kwargs["extra_body"] = {"search_parameters": search_parameters}
+
+            response = await self.client.chat.completions.create(**api_kwargs)
 
             content = response.choices[0].message.content
             tokens = {
@@ -314,7 +334,7 @@ class EnhancedGrokClient:
             use_web: Enable web search (live_search)
             use_x: Enable X (Twitter) search (not currently supported)
             use_code: Enable code execution (not currently supported)
-            model: Model to use (default: grok-beta, optimized for tools)
+            model: Model to use (default: grok-2-latest)
 
         Returns:
             (research_result, token_usage)
@@ -336,13 +356,13 @@ class EnhancedGrokClient:
             logger.info("No supported tools enabled, using regular chat")
             return await self.chat(
                 prompt=query,
-                model=model or "grok-beta",
+                model=model or self.default_model,
                 temperature=0.3
             )
 
         return await self.chat(
             prompt=query,
-            model=model or "grok-beta",  # Use grok-beta for tool use
+            model=model or self.default_model,
             server_side_tools=tools,
             temperature=0.3  # Lower temperature for research
         )
