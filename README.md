@@ -39,6 +39,36 @@ Enable multi-turn conversations between Claude (via CLI) and Grok (via API) with
 
 ---
 
+## ⚡ Current Status (Updated 2025-01-11)
+
+**Implementation Status**: ✅ Core complete, ready for testing
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| GrokClient | ✅ Working | Fixed model IDs (grok-4 → grok-4-0709) |
+| ClaudeClient | ✅ Working | CLI wrapper implemented |
+| Protocol Engine | ✅ Working | All execution modes supported |
+| State Management | ✅ Working | Session persistence implemented |
+| CLI Interface | ✅ Working | Full command suite |
+| Mode Configs | ✅ Ready | Loop, debate, podcast, pipeline, dynamic |
+| Tests | ⚠️ Basic | Simple tests work, needs API key for full tests |
+
+**What Works Right Now**:
+- ✅ Async dialogue orchestration between Claude and Grok
+- ✅ All 5 interaction modes (loop, debate, podcast, pipeline, dynamic)
+- ✅ Correct xAI API model IDs
+- ✅ Session persistence and markdown export
+- ✅ Token tracking and latency measurement
+
+**What's Not Available** (see docs/FEATURE-MATRIX.md):
+- ❌ Collections API (doesn't exist in xAI API)
+- ❌ Files API (not as documented)
+- ❌ Server-side tools (unverified)
+
+**Next Steps**: See docs/ROADMAP.md for enhancement plan
+
+---
+
 ## Quick Start
 
 ### Installation

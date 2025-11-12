@@ -11,15 +11,38 @@ from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
+# Model ID mapping: friendly name -> actual API model ID
+MODEL_IDS = {
+    # Primary models (with version suffixes)
+    "grok-4": "grok-4-0709",
+    "grok-4-0709": "grok-4-0709",
+    "grok-3": "grok-3",
+
+    # Vision models
+    "grok-vision": "grok-2-vision-1212",
+    "grok-2-vision": "grok-2-vision-1212",
+    "grok-2-vision-1212": "grok-2-vision-1212",
+
+    # Image generation
+    "grok-image": "grok-2-image",
+    "grok-2-image": "grok-2-image",
+}
+
 
 class GrokClient:
     """
     Async client for Grok API
 
     Uses OpenAI SDK with XAI endpoint for compatibility
+
+    Supported models:
+    - grok-4 (alias for grok-4-0709) - Latest Grok model
+    - grok-3 - Previous generation
+    - grok-vision - Multimodal vision model
+    - grok-image - Image generation
     """
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "grok-4-fast"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "grok-4"):
         self.api_key = api_key or os.environ.get("XAI_API_KEY")
         if not self.api_key:
             raise ValueError(
@@ -32,7 +55,30 @@ class GrokClient:
             base_url="https://api.x.ai/v1"
         )
 
-        logger.info(f"Grok client initialized with model: {model}")
+        # Validate model on init
+        resolved_model = self._resolve_model(model)
+        logger.info(f"Grok client initialized with model: {model} (resolves to {resolved_model})")
+
+    def _resolve_model(self, model: str) -> str:
+        """
+        Resolve friendly model name to actual API model ID
+
+        Args:
+            model: Friendly model name or actual ID
+
+        Returns:
+            Actual API model ID
+
+        Raises:
+            ValueError: If model not recognized
+        """
+        if model in MODEL_IDS:
+            return MODEL_IDS[model]
+
+        # If it's already a valid ID (not in mapping), return as-is
+        # This allows for future models without updating the client
+        logger.warning(f"Model '{model}' not in known models, using as-is")
+        return model
 
     async def chat(
         self,
@@ -47,7 +93,7 @@ class GrokClient:
 
         Args:
             prompt: User prompt
-            model: Model to use (grok-4, grok-4-fast, grok-3)
+            model: Model to use (grok-4, grok-3, grok-vision)
             temperature: Sampling temperature
             max_tokens: Maximum tokens to generate
             system_prompt: Optional system prompt
@@ -55,7 +101,7 @@ class GrokClient:
         Returns:
             (response_text, token_usage_dict)
         """
-        use_model = model or self.default_model
+        use_model = self._resolve_model(model or self.default_model)
 
         # Build messages
         messages = []
@@ -105,7 +151,7 @@ class GrokClient:
 
         Yields chunks as they arrive
         """
-        use_model = model or self.default_model
+        use_model = self._resolve_model(model or self.default_model)
 
         messages = []
         if system_prompt:

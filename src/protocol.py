@@ -270,7 +270,8 @@ class ProtocolEngine:
         if participant == "claude":
             response, tokens = await self.claude.chat(prompt)
         elif participant == "grok":
-            model = turn_config.get("grok_model", "grok-4-fast")
+            # Default to grok-4 (which resolves to grok-4-0709)
+            model = turn_config.get("grok_model", "grok-4")
             response, tokens = await self.grok.chat(prompt, model=model)
         else:
             raise ValueError(f"Unknown participant: {participant}")
