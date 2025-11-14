@@ -10,146 +10,156 @@ Enable sophisticated multi-turn conversations between AI models (Claude + Grok) 
 
 ---
 
+## 📑 Table of Contents
+
+- [What is This?](#-what-is-this)
+- [Quick Start](#-quick-start)
+- [Sample Queries](#-sample-queries)
+- [Key Features](#-key-features)
+- [Usage](#-usage)
+- [Orchestration Modes](#-orchestration-modes-explained)
+- [Cost Analysis](#-cost-analysis)
+- [Configuration](#-configuration)
+- [Testing](#-testing)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [Troubleshooting](#-troubleshooting)
+
+---
+
 ## 🎯 What is This?
 
 A production-ready system for orchestrating conversations between multiple AI models, designed for:
-- **Technical Research**: Deep exploration of complex topics (HKT, category theory, system architecture, etc.)
+
+- **Technical Research**: Deep exploration of complex topics (HKT, category theory, system architecture)
 - **Decision Analysis**: Structured debate and evaluation of tradeoffs
 - **Code Generation**: Multi-turn development with context accumulation
 - **Knowledge Building**: Sequential synthesis from foundational concepts to practical applications
 
----
-
-## ✨ Features
-
-### `/grok` Command System
-
-Three powerful Claude Code slash commands for Grok API integration:
-
-#### `/grok` - Multi-Model Orchestration
-```bash
-/grok "Research Higher Kinded Types" --mode loop
-/grok "Compare microservices vs monolith" --mode debate
-/grok "Explain async/await" --mode podcast
-```
-
-**Supported Modes**:
-- `loop` (8 turns): Sequential knowledge building
-- `debate` (6 turns): Adversarial exploration
-- `podcast` (10 turns): Conversational teaching
-- `pipeline` (7 stages): Static workflow
-- `dynamic`: Adaptive task decomposition
-
-**Flags**:
-- `--mode <mode>`: Orchestration pattern
-- `--turns <n>`: Number of dialogue turns
-- `--model <id>`: Specific Grok model (grok-4-fast-reasoning, grok-code-fast-1, etc.)
-- `--temperature <f>`: Sampling temperature (0.0-2.0)
-- `--max-tokens <n>`: Response length limit
-- `--output <file>`: Save transcript
-- `--verbose`: Show detailed execution info
-- `--quick`: Single query bypass (no orchestration)
-
-#### `/grok-list` - Session Management
-```bash
-/grok-list                    # List all sessions
-/grok-list --recent 10        # Last 10 sessions
-```
-
-#### `/grok-export` - Export Sessions
-```bash
-/grok-export <session-id>                     # Export to markdown
-/grok-export <session-id> --format json       # Export to JSON
-/grok-export <session-id> --output results.md # Save to file
-```
-
-### Core Features
-
-🔄 **Async Execution**
-- Non-blocking I/O with Python asyncio
-- Parallel execution where possible
-- No heavy infrastructure required
-
-🧠 **Intelligent Orchestration**
-- Claude-side workflow management
-- Dynamic task decomposition
-- Context-aware prompts
-- Adaptive loops based on results
-
-💰 **Cost Tracking**
-- Token usage monitoring
-- Per-query cost calculation
-- Session-level cost summaries
-- Optimization recommendations
-
-📊 **Observable**
-- Session persistence (JSON)
-- Markdown export
-- Execution logs
-- Performance metrics
-
----
+<br>
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- Python 3.11+
-- XAI API key (get from [x.ai](https://x.ai))
-- Claude Code (optional, for `/grok` commands)
-
-### Installation
+### Installation (5 minutes)
 
 ```bash
-# Clone the repository
+# Clone and install
 git clone https://github.com/manutej/ai-dialogue.git
 cd ai-dialogue
-
-# Create virtual environment
 python3 -m venv venv
 source venv/bin/activate
-
-# Install dependencies
 pip install -e .
 
-# Set up environment
+# Set up API key
 cp .env.example .env
-# Edit .env and add your XAI_API_KEY
+# Edit .env and add your XAI_API_KEY from https://x.ai
 ```
 
 ### For Claude Code Users
 
-Install the `/grok` commands:
-
 ```bash
+# Install /grok commands
 ./utils/grok-commands/install.sh
-```
 
-Restart Claude Code, then use:
-
-```bash
+# Restart Claude Code, then try:
 /grok "What is category theory?" --quick
-/grok "Research microservices architecture" --mode loop --output research.md
 ```
 
----
+<br>
+
+## 💡 Sample Queries
+
+Get started with these example queries:
+
+### Quick Answers (--quick mode)
+```bash
+/grok "Explain async/await in Python" --quick
+/grok "What are the SOLID principles?" --quick
+/grok "Compare REST vs GraphQL APIs" --quick
+```
+
+### Research Mode (--mode loop)
+Deep exploration with 8-turn knowledge building:
+```bash
+/grok "Research Higher Kinded Types in TypeScript" --mode loop --output hkt-research.md
+/grok "Explore category theory fundamentals" --mode loop
+/grok "Deep dive into distributed systems patterns" --mode loop --turns 10
+```
+
+### Debate Mode (--mode debate)
+Adversarial analysis for decision-making:
+```bash
+/grok "Should we use microservices or monolith?" --mode debate
+/grok "Evaluate GraphQL vs REST for our API" --mode debate
+/grok "TypeScript vs JavaScript for new projects" --mode debate
+```
+
+### Podcast Mode (--mode podcast)
+Conversational teaching format:
+```bash
+/grok "Explain quantum computing for beginners" --mode podcast
+/grok "Make functional programming accessible" --mode podcast
+/grok "Teach Docker containerization" --mode podcast
+```
+
+### Cost-Conscious Queries
+```bash
+# Limit tokens to control costs
+/grok "Explain monads" --quick --max-tokens 200
+
+# Save expensive research sessions
+/grok "Research event sourcing patterns" --mode loop --output saved-research.md
+```
+
+**💰 Cost**: Quick queries ~$0.005 each | Research sessions ~$0.14 | See [Cost Analysis](#-cost-analysis) for details
+
+<br>
+
+## ✨ Key Features
+
+### `/grok` Command System
+
+Three powerful Claude Code slash commands:
+
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `/grok` | Multi-model orchestration | `/grok "Research HKT" --mode loop` |
+| `/grok-list` | Session management | `/grok-list --recent 10` |
+| `/grok-export` | Export sessions | `/grok-export <id> --format json` |
+
+### Orchestration Modes
+
+- **`loop`** (8 turns): Sequential knowledge building for research
+- **`debate`** (6 turns): Adversarial analysis for decision-making
+- **`podcast`** (10 turns): Conversational teaching format
+- **`pipeline`** (7 stages): Static workflow execution
+- **`dynamic`**: Adaptive task decomposition
+
+### Core Capabilities
+
+🔄 **Async Execution** - Non-blocking I/O, no heavy infrastructure
+🧠 **Intelligent Orchestration** - Dynamic task decomposition, context-aware prompts
+💰 **Cost Tracking** - Token monitoring, per-query costs, optimization tips
+📊 **Observable** - Session persistence, markdown export, execution logs
+
+<br>
 
 ## 📖 Usage
 
-### Command Line Interface
+### Command Line
 
-```python
-# Run a loop mode session
-python cli.py --mode loop --topic "Distributed systems architecture" --turns 6
-
-# Run debate mode
-python cli.py --mode debate --topic "GraphQL vs REST APIs"
-
+```bash
 # Quick single query
 python cli.py --quick "Explain monads in functional programming"
+
+# Research mode
+python cli.py --mode loop --topic "Distributed systems" --turns 6
+
+# Debate mode
+python cli.py --mode debate --topic "GraphQL vs REST APIs"
 ```
 
-### Programmatic Usage
+### Programmatic API
 
 ```python
 import asyncio
@@ -161,112 +171,147 @@ async def example():
     # Simple query
     response, tokens = await client.chat("What is a functor?")
     print(f"Response: {response}")
-    print(f"Tokens: {tokens['total']} (Cost: ~${tokens['total'] * 0.00002:.6f})")
-
-    # With parameters
-    response, tokens = await client.chat(
-        prompt="Explain category theory",
-        model="grok-code-fast-1",
-        temperature=0.7,
-        max_tokens=500
-    )
+    print(f"Cost: ~${tokens['total'] * 0.00002:.6f}")
 
     await client.close()
 
 asyncio.run(example())
 ```
 
-### Orchestration Modes
+### Advanced Usage
 
-#### Loop Mode: Sequential Knowledge Building
+**Custom Parameters:**
+```bash
+/grok "Explain category theory" \
+  --model grok-4-fast-reasoning \
+  --temperature 0.7 \
+  --max-tokens 1000 \
+  --output theory.md \
+  --verbose
+```
+
+**Session Management:**
+```bash
+# List recent sessions
+/grok-list --recent 10
+
+# Export session to markdown
+/grok-export <session-id> --output research.md
+
+# Export to JSON for processing
+/grok-export <session-id> --format json
+```
+
+<br>
+
+## 🎭 Orchestration Modes Explained
+
+### Loop Mode: Sequential Knowledge Building
+
 ```bash
 /grok "Higher Kinded Types in TypeScript" --mode loop --turns 8
 ```
 
-**Pattern**: Foundation → Analysis → Evidence → Synthesis → Applications → Future → Reflection → Integration
-
-**Cost**: ~$0.14 for 8 turns
+**Flow**: Foundation → Analysis → Evidence → Synthesis → Applications → Future → Reflection → Integration
 **Best For**: Research, deep exploration, systematic learning
+**Cost**: ~$0.14 for 8 turns (~60 seconds)
 
-#### Debate Mode: Adversarial Analysis
+### Debate Mode: Adversarial Analysis
+
 ```bash
 /grok "Should we use microservices?" --mode debate --turns 6
 ```
 
-**Pattern**: Proposition → Opposition → Defense → Rebuttal → Synthesis → Verdict
-
-**Cost**: ~$0.12 for 6 turns
+**Flow**: Proposition → Opposition → Defense → Rebuttal → Synthesis → Verdict
 **Best For**: Decision-making, tradeoff analysis, critical evaluation
+**Cost**: ~$0.10 for 6 turns (~45 seconds)
 
-#### Podcast Mode: Conversational Teaching
+### Podcast Mode: Conversational Teaching
+
 ```bash
 /grok "Quantum computing for beginners" --mode podcast --turns 10
 ```
 
-**Pattern**: Intro → Overview → Questions → Deep Dive → Insights → Implications → Challenge → Balance → Takeaways → Closing
-
-**Cost**: ~$0.20 for 10 turns
+**Flow**: Intro → Overview → Questions → Deep Dive → Insights → Implications → Challenge → Balance → Takeaways → Closing
 **Best For**: Learning, teaching, accessible explanations
+**Cost**: ~$0.17 for 10 turns (~75 seconds)
 
----
+<br>
 
 ## 💰 Cost Analysis
 
-Based on comprehensive testing with real queries:
+### Quick Reference
 
-### Per-Query Costs
+| Query Type | Tokens | Cost | Example |
+|------------|--------|------|---------|
+| Simple fact | ~230 | $0.005 | "What is REST?" |
+| Code snippet | ~270 | $0.005 | "Show me a decorator" |
+| Explanation | ~350-500 | $0.007-0.01 | "Explain async/await" |
+| Deep analysis | ~800-1000 | $0.016-0.02 | Research sessions |
 
-| Query Type | Tokens | Cost | Use Case |
-|------------|--------|------|----------|
-| Simple fact | ~230 | $0.0046 | Quick answers |
-| Code snippet | ~270 | $0.0054 | Small code examples |
-| Explanation | ~350-500 | $0.007-0.01 | Technical concepts |
-| Detailed analysis | ~800-1000 | $0.016-0.02 | Deep dives |
+### Monthly Projections
 
-### Orchestration Session Costs
-
-| Mode | Turns | Avg Tokens | Est. Cost | Duration |
-|------|-------|------------|-----------|----------|
-| Loop | 8 | ~7,000 | $0.14 | ~60s |
-| Debate | 6 | ~5,000 | $0.10 | ~45s |
-| Podcast | 10 | ~8,500 | $0.17 | ~75s |
-| Dynamic | 4-8 | ~5,000 | $0.10 | ~40-60s |
-
-### Monthly Cost Projections
-
-| Usage Level | Queries/Day | Sessions/Month | Est. Cost/Month |
-|-------------|-------------|----------------|-----------------|
-| **Light** (Solo dev) | 10 | 10 | **$1.80** |
-| **Moderate** (Active dev) | 50 | 20 | **$15.45** |
-| **Heavy** (Small team) | 100 | 50 | **$57.60** |
-| **Enterprise** | 500 | 100 | **$288.00** |
+| Usage Level | Queries/Day | Est. Cost/Month |
+|-------------|-------------|-----------------|
+| **Light** (Solo dev) | 10 queries | **$1.80** |
+| **Moderate** (Active dev) | 50 queries | **$15.45** |
+| **Heavy** (Small team) | 100 queries | **$57.60** |
 
 **Note**: Based on $0.02 per 1K tokens. Actual costs may vary.
 
----
+**Cost Control Tips:**
+- Use `--quick` for simple queries (no orchestration overhead)
+- Set `--max-tokens` to limit response length
+- Save sessions with `--output` to avoid re-running expensive queries
+- Use `--mode debate` (6 turns) instead of `--mode loop` (8 turns) when appropriate
+
+<br>
+
+## 🔧 Configuration
+
+### Environment Variables
+
+```bash
+# Required
+XAI_API_KEY=your-xai-api-key
+
+# Optional (with defaults)
+GROK_MODEL=grok-4-fast-reasoning-latest
+GROK_TEMPERATURE=0.7
+GROK_MAX_TOKENS=4096
+```
+
+### Model Options
+
+```
+Text Generation (Grok 4):
+├─ grok-4-fast-reasoning-latest  ← Recommended (best balance)
+├─ grok-4-fast-non-reasoning-latest (faster, simpler tasks)
+└─ grok-code-fast-1 (code-specialized, 43% more expensive)
+
+Vision (Grok 2):
+├─ grok-2-vision-latest (multimodal - images + text)
+└─ grok-2-image-latest (image generation)
+```
+
+**Recommendation**: Use default `grok-4-fast-reasoning` for most tasks.
+
+<br>
 
 ## 🧪 Testing
 
-### Comprehensive Test Suite
-
-The project includes extensive testing with cost tracking:
+### Run Tests
 
 ```bash
-# Activate virtual environment
+# Activate environment
 source venv/bin/activate
-
-# Set API key
 export XAI_API_KEY='your-key-here'
 
-# Run basic functionality tests (10 tests, ~6¢)
-python3 tests/grok-commands/test_grok_with_costs.py
-
-# Run advanced features tests (4 tests, ~22¢)
-# Includes: Loop mode, Debate mode, Streaming, Specific use cases
-python3 tests/grok-commands/test_advanced_features.py
-
-# Run all existing tests
+# Run all tests
 pytest tests/
+
+# Run with coverage
+pytest tests/ --cov=src --cov-report=html
 ```
 
 ### Test Results
@@ -277,13 +322,35 @@ pytest tests/
 - Streaming: 1 test
 - Real-world use cases: 1 test
 
-**Total testing cost**: $0.28 (~28 cents)
+**Total testing cost**: $0.28
 
-**Test Reports**: See `tests/grok-commands/results/` for detailed cost analysis and performance metrics.
+See [Test Reports](tests/grok-commands/results/) for detailed cost analysis.
 
----
+<br>
+
+## 📚 Documentation
+
+### Quick Links
+
+- **[Command Reference](utils/grok-commands/README.md)** - `/grok` command documentation
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute
+- **[Test Reports](tests/grok-commands/results/)** - Test results with cost analysis
+- **[Testing Guide](docs/TESTING-GUIDE.md)** - Testing strategies
+- **[Migration Guide](docs/MIGRATION-GUIDE.md)** - Upgrading instructions
+- **[Roadmap](docs/ROADMAP.md)** - Project roadmap
+
+### In This README
+
+- **Orchestration Modes**: See [Orchestration Modes](#-orchestration-modes-explained)
+- **Cost Analysis**: See [Cost Analysis](#-cost-analysis)
+- **API Examples**: See [Usage](#-usage) and [Quick Start](#-quick-start)
+
+<br>
 
 ## 📁 Project Structure
+
+<details>
+<summary>Click to expand full project structure</summary>
 
 ```
 ai-dialogue/
@@ -316,174 +383,78 @@ ai-dialogue/
 │   ├── test_protocol.py           # Protocol tests
 │   ├── test_grok_enhanced.py      # Enhanced client tests
 │   └── grok-commands/             # /grok command tests
-│       ├── test_grok_with_costs.py        # Basic tests + cost tracking
-│       ├── test_advanced_features.py      # Orchestration + streaming tests
-│       ├── results/                       # Test reports and logs
-│       │   ├── FINAL-COMPREHENSIVE-REPORT-20251114.md
-│       │   ├── COMPREHENSIVE-TEST-REPORT-20251114.md
-│       │   └── TEST-SUMMARY.md
-│       └── docs/                          # Test documentation
+│       ├── test_grok_with_costs.py
+│       ├── test_advanced_features.py
+│       └── results/               # Test reports
 │
 ├── utils/                         # Utilities
 │   └── grok-commands/             # /grok command installation
-│       ├── install.sh             # Install script
-│       ├── commands/              # Command definitions
-│       │   ├── grok.md            # Main /grok command
-│       │   ├── grok-list.md       # Session listing
-│       │   └── grok-export.md     # Export functionality
-│       └── README.md              # Command documentation
+│       ├── install.sh
+│       ├── commands/
+│       └── README.md
 │
 ├── docs/                          # Documentation
-│   ├── API.md                     # API reference
-│   ├── MODES.md                   # Orchestration modes guide
-│   ├── COST-OPTIMIZATION.md       # Cost optimization strategies
-│   └── project-history/           # Historical documentation
-│
 ├── examples/                      # Usage examples
-│   └── research_hkt.py            # HKT research example
-│
 ├── specs/                         # Technical specifications
-│   └── grok-consult.md            # Original Grok consultation spec
-│
-├── sessions/                      # Session storage (gitignored)
-├── logs/                          # Execution logs (gitignored)
 └── cli.py                         # Command-line interface
 ```
 
----
+</details>
 
-## 🔧 Configuration
-
-### Environment Variables
-
-```bash
-# Required
-XAI_API_KEY=your-xai-api-key
-
-# Optional
-GROK_MODEL=grok-4-fast-reasoning-latest  # Default model
-GROK_TEMPERATURE=0.7                      # Default temperature
-GROK_MAX_TOKENS=4096                      # Default max tokens
-```
-
-### Model Options
-
-```
-Text Generation (Grok 4):
-- grok-4-fast-reasoning-latest (recommended - best balance)
-- grok-4-fast-non-reasoning-latest (faster, simpler tasks)
-- grok-code-fast-1 (code-specialized, 43% more expensive)
-
-Vision (Grok 2):
-- grok-2-vision-latest (multimodal - images + text)
-- grok-2-image-latest (image generation)
-```
-
-**Recommendation**: Use default model (`grok-4-fast-reasoning`) for most tasks. Only use code model for code-heavy work due to higher cost.
-
----
-
-## 📚 Documentation
-
-- **[Command Reference](utils/grok-commands/README.md)**: `/grok` command documentation and usage guide
-- **[Test Reports](tests/grok-commands/results/)**: Comprehensive test results with cost analysis
-- **[Testing Guide](docs/TESTING-GUIDE.md)**: Testing strategies and guidelines
-- **[Grok Quick Reference](docs/GROK-QUICK-REFERENCE.md)**: Quick reference for Grok API features
-- **[Migration Guide](docs/MIGRATION-GUIDE.md)**: Upgrading and migration instructions
-- **[Roadmap](docs/ROADMAP.md)**: Project roadmap and future plans
-
-**In This README:**
-- Orchestration Modes: See [Usage](#-usage) section above
-- Cost Analysis: See [Cost Analysis](#-cost-analysis) section above
-- API Examples: See [Usage](#-usage) and [Quick Start](#-quick-start) sections
-
----
+<br>
 
 ## 🤝 Contributing
 
-Contributions welcome! Please:
+Contributions welcome! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for detailed guidelines.
+
+**Quick Start:**
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
 4. Run tests: `pytest tests/`
 5. Commit with clear messages
-6. Push to your branch
-7. Open a Pull Request
+6. Open a Pull Request
 
-### Development Setup
-
-```bash
-# Install dev dependencies
-pip install -r requirements-dev.txt
-
-# Run tests with coverage
-pytest tests/ --cov=src --cov-report=html
-
-# Run type checking (if using mypy)
-mypy src/
-
-# Format code (if using black)
-black src/ tests/
-```
-
----
+<br>
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-**Issue**: "XAI_API_KEY not set"
+**"XAI_API_KEY not set"**
 ```bash
-# Solution: Set environment variable
 export XAI_API_KEY='your-key-here'
 # Or add to .env file
 ```
 
-**Issue**: "/grok command not found"
+**"/grok command not found"**
 ```bash
-# Solution: Install commands and restart Claude Code
 ./utils/grok-commands/install.sh
-# Then completely restart Claude Code
+# Then restart Claude Code completely
 ```
 
-**Issue**: "ModuleNotFoundError"
+**"ModuleNotFoundError"**
 ```bash
-# Solution: Install in development mode
 pip install -e .
 ```
 
-**Issue**: High API costs
+**High API costs**
 ```bash
-# Solution: Use max_tokens to control costs
-/grok "query" --max-tokens 200
-# See docs/COST-OPTIMIZATION.md for more strategies
+/grok "query" --quick --max-tokens 200
 ```
 
----
+See **[CONTRIBUTING.md](CONTRIBUTING.md)** for more troubleshooting help.
 
-## 📝 License
+<br>
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **Anthropic** for Claude and Claude Code
-- **xAI** for Grok API
-- **OpenAI** for SDK compatibility layer
-- The functional programming community for inspiration
-
----
-
-## 📞 Support
+## 📞 Support & Community
 
 - **Issues**: [GitHub Issues](https://github.com/manutej/ai-dialogue/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/manutej/ai-dialogue/discussions)
 - **Documentation**: [Project Docs](docs/)
 
----
+<br>
 
 ## 🗺️ Roadmap
 
@@ -494,6 +465,21 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [ ] Support additional AI providers
 - [ ] Implement caching for repeated queries
 - [ ] Add collaborative multi-user sessions
+
+<br>
+
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+<br>
+
+## 🙏 Acknowledgments
+
+- **Anthropic** for Claude and Claude Code
+- **xAI** for Grok API
+- **OpenAI** for SDK compatibility layer
+- The functional programming community for inspiration
 
 ---
 
