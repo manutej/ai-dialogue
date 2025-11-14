@@ -522,6 +522,74 @@ conversation = await engine.run_protocol(
 
 ---
 
+## Claude Code Slash Commands
+
+**NEW**: This project includes `/grok` slash commands for Claude Code that provide direct Grok orchestration without the full protocol engine.
+
+### Quick Start with Slash Commands
+
+**1. Install commands** (one-time setup):
+```bash
+./utils/grok-commands/install.sh
+# Or for global installation:
+./utils/grok-commands/install.sh --global
+```
+
+**2. Restart Claude Code** (commands are cached)
+
+**3. Use commands**:
+```bash
+# Quick single query (95% use case)
+/grok --quick "What is quantum computing?"
+
+# Multi-turn orchestration
+/grok --mode loop "Explain category theory"
+/grok --mode debate "Serverless vs traditional infrastructure"
+/grok --mode podcast "History of the internet"
+
+# Session management
+/grok-list
+/grok-export SESSION_ID
+```
+
+### Available Commands
+
+| Command | Purpose | Usage |
+|---------|---------|-------|
+| `/grok` | Multi-model orchestration | 6 modes, 14 flags, quick or deep queries |
+| `/grok-list` | List dialogue sessions | View all saved conversations |
+| `/grok-export` | Export sessions | Markdown, JSON, or text format |
+
+### Features
+
+- **6 Orchestration Modes**: loop, debate, podcast, pipeline, dynamic, research-enhanced
+- **14 Configuration Flags**: `--quick`, `--mode`, `--model`, `--temperature`, etc.
+- **5-Level Path Detection**: Auto-finds ai-dialogue project (no hardcoded paths)
+- **Session Management**: Automatic saving and export capabilities
+- **Portable**: Works globally or at project level
+
+### Documentation
+
+- **Installation & Usage**: `utils/grok-commands/README.md`
+- **Quick Reference**: `utils/grok-commands/docs/GROK-COMMANDS-QUICK-REFERENCE.md`
+- **Testing Guide**: `tests/grok-commands/README.md`
+
+### Testing
+
+Comprehensive test suite with 40 tests:
+
+```bash
+# Quick test (5 critical tests, ~1 minute)
+./tests/grok-commands/scripts/run-quick-tests.sh
+
+# Full test suite (40 tests, ~15 minutes)
+./tests/grok-commands/scripts/test-grok-commands.sh --full
+```
+
+See `tests/grok-commands/` for complete testing documentation
+
+---
+
 ## Advanced Usage
 
 ### Custom Mode
