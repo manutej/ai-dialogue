@@ -15,10 +15,10 @@ async def test_live_api():
         print("   Usage: export XAI_API_KEY='your-key-here'")
         return False
 
-    print("🔧 Initializing GrokAdapter with grok-2-latest...")
+    print("🔧 Initializing GrokAdapter with grok-4-fast-reasoning-latest...")
     adapter = GrokAdapter(
         api_key=api_key,
-        model="grok-2",  # Uses grok-2-latest per MODEL_IDS mapping
+        # Uses default: grok-4-fast-reasoning-latest
         temperature=0.7
     )
 

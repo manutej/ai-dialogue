@@ -17,7 +17,12 @@ async def test_direct_langchain():
 
     keys = [api_key]
 
-    models_to_test = ["grok-2-latest", "grok-beta", "grok-2"]
+    # Official models from docs.x.ai/docs/models
+    models_to_test = [
+        "grok-4-fast-reasoning-latest",  # Recommended reasoning model
+        "grok-code-fast-1",              # Code-specialized
+        "grok-4-fast-non-reasoning-latest"  # Faster, simpler tasks
+    ]
 
     for idx, api_key in enumerate(keys, 1):
         print(f"\n{'='*60}")

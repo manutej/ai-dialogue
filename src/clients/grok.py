@@ -11,29 +11,39 @@ from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
-# Model ID mapping - VERIFIED via Context7 research (2025-01-13)
-# Note: grok-4-0709 does NOT exist in xAI API
+# Model ID mapping - Official xAI model identifiers (docs.x.ai/docs/models)
+# Updated: 2025-11-14 per user guidance
+# NOTE: Grok-2 models are ONLY for vision/image, NOT for text generation
 MODEL_IDS = {
-    # Grok 4 models
-    "grok-4": "grok-4",
-    "grok-4-fast": "grok-4-fast",
+    # ===== TEXT GENERATION MODELS (Grok 4) =====
 
-    # Grok 3 models
-    "grok-3": "grok-3",
-    "grok-3-latest": "grok-3-latest",
+    # Grok 4 Fast Reasoning (recommended for most tasks)
+    "grok-4-fast-reasoning": "grok-4-fast-reasoning",
+    "grok-4-fast-reasoning-latest": "grok-4-fast-reasoning-latest",
 
-    # Grok 2 models (recommended default - most accessible)
-    "grok-2": "grok-2-latest",
-    "grok-2-latest": "grok-2-latest",
+    # Grok 4 Fast Non-Reasoning (faster, simpler tasks)
+    "grok-4-fast-non-reasoning": "grok-4-fast-non-reasoning",
+    "grok-4-fast-non-reasoning-latest": "grok-4-fast-non-reasoning-latest",
 
-    # Vision models
-    "grok-vision": "grok-2-vision-1212",
-    "grok-2-vision": "grok-2-vision-1212",
-    "grok-2-vision-1212": "grok-2-vision-1212",
+    # Code-specialized model
+    "grok-code-fast": "grok-code-fast-1",
+    "grok-code-fast-1": "grok-code-fast-1",
+
+    # ===== MULTIMODAL MODELS (Grok 2 - Vision/Image only) =====
+
+    # Vision model (multimodal - images + text)
+    "grok-vision": "grok-2-vision-latest",
+    "grok-2-vision-latest": "grok-2-vision-latest",
 
     # Image generation
-    "grok-image": "grok-2-image",
-    "grok-2-image": "grok-2-image",
+    "grok-image": "grok-2-image-latest",
+    "grok-2-image-latest": "grok-2-image-latest",
+
+    # ===== CONVENIENCE ALIASES =====
+
+    "grok-4": "grok-4-fast-reasoning-latest",  # Default to reasoning
+    "grok-fast": "grok-4-fast-reasoning-latest",
+    "grok-code": "grok-code-fast-1",
 }
 
 
