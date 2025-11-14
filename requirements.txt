@@ -1,0 +1,12 @@
+# AI Dialogue - Production Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+openai>=1.0.0
+langchain-openai>=0.3.0
+langchain-core>=0.3.0
+click>=8.0.0
+aiohttp>=3.9.0
+
+# Optional: Environment variable management
+python-dotenv>=1.0.0

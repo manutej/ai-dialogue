@@ -73,10 +73,31 @@ Enable multi-turn conversations between Claude (via CLI) and Grok (via API) with
 
 ### Installation
 
+**Option 1: Using pyproject.toml (recommended)**
 ```bash
 cd ai-dialogue
 pip install -e .
+
+# For development (includes testing tools)
+pip install -e ".[dev]"
 ```
+
+**Option 2: Using requirements.txt**
+```bash
+cd ai-dialogue
+pip install -r requirements.txt
+
+# For development
+pip install -r requirements-dev.txt
+```
+
+**Dependencies**:
+- Python 3.10+
+- openai >= 1.0.0
+- langchain-openai >= 0.3.0
+- langchain-core >= 0.3.0
+- click >= 8.0.0
+- aiohttp >= 3.9.0
 
 ### Set API Keys
 
