@@ -39,20 +39,140 @@ Enable multi-turn conversations between Claude (via CLI) and Grok (via API) with
 
 ---
 
+## ⚡ Current Status (Updated 2025-01-11)
+
+**Implementation Status**: ✅ Core complete, ready for testing
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| GrokClient | ✅ Working | Fixed model IDs (grok-4 → grok-4-0709) |
+| ClaudeClient | ✅ Working | CLI wrapper implemented |
+| Protocol Engine | ✅ Working | All execution modes supported |
+| State Management | ✅ Working | Session persistence implemented |
+| CLI Interface | ✅ Working | Full command suite |
+| Mode Configs | ✅ Ready | Loop, debate, podcast, pipeline, dynamic |
+| Tests | ⚠️ Basic | Simple tests work, needs API key for full tests |
+
+**What Works Right Now**:
+- ✅ Async dialogue orchestration between Claude and Grok
+- ✅ All 5 interaction modes (loop, debate, podcast, pipeline, dynamic)
+- ✅ Correct xAI API model IDs
+- ✅ Session persistence and markdown export
+- ✅ Token tracking and latency measurement
+
+**What's Not Available** (see docs/FEATURE-MATRIX.md):
+- ❌ Collections API (doesn't exist in xAI API)
+- ❌ Files API (not as documented)
+- ❌ Server-side tools (unverified)
+
+**Next Steps**: See docs/ROADMAP.md for enhancement plan
+
+---
+
 ## Quick Start
 
 ### Installation
 
+**Option 1: Using pyproject.toml (recommended)**
 ```bash
 cd ai-dialogue
 pip install -e .
+
+# For development (includes testing tools)
+pip install -e ".[dev]"
 ```
+
+**Option 2: Using requirements.txt**
+```bash
+cd ai-dialogue
+pip install -r requirements.txt
+
+# For development
+pip install -r requirements-dev.txt
+```
+
+**Dependencies**:
+- Python 3.10+
+- openai >= 1.0.0
+- langchain-openai >= 0.3.0
+- langchain-core >= 0.3.0
+- click >= 8.0.0
+- aiohttp >= 3.9.0
 
 ### Set API Keys
 
+**⚠️ SECURITY WARNING**: Never commit API keys to Git! Always use environment variables or `.env` files.
+
+#### Option 1: Environment Variables (Temporary)
+
 ```bash
-export XAI_API_KEY="your-grok-api-key"
+# For current terminal session only
+export XAI_API_KEY="your-xai-api-key-here"
+export ANTHROPIC_API_KEY="your-claude-api-key-here"  # If not using Claude CLI
+```
+
+#### Option 2: .env File (Recommended)
+
+Create a `.env` file in the project root:
+
+```bash
+# Create .env file (never commit this!)
+cat > .env <<EOF
+# xAI (Grok) API Key
+# Get yours at: https://console.x.ai/api-keys
+# IMPORTANT: Billing must be set up BEFORE keys work!
+XAI_API_KEY=your-xai-api-key-here
+
+# Anthropic (Claude) API Key
+# Get yours at: https://console.anthropic.com/settings/keys
+# Only needed if not using Claude CLI
+ANTHROPIC_API_KEY=your-claude-api-key-here
+EOF
+
+# Load environment variables
+source .env
+
+# Or use python-dotenv (automatically loaded by the app)
+pip install python-dotenv
+```
+
+The `.env` file is already in `.gitignore` to prevent accidental commits.
+
+#### Getting API Keys
+
+**xAI (Grok)**:
+1. Go to https://console.x.ai
+2. Navigate to API Keys section
+3. **CRITICAL**: Add billing FIRST at Billing → API Credits
+   - Add payment method
+   - Purchase at least $5-10 in credits
+   - Wait 5-10 minutes for activation
+4. Create new API key AFTER billing is active
+5. Copy key immediately (shown only once)
+
+**Anthropic (Claude)**:
+1. Go to https://console.anthropic.com
+2. Navigate to Settings → API Keys
+3. Create new key
+4. Add payment method if needed
+
+**Alternative for Claude**: Use Claude CLI (no API key needed)
+```bash
 # Claude CLI should already be configured
+claude auth login
+```
+
+#### Verifying Setup
+
+Test your API keys:
+
+```bash
+# Test Grok adapter
+export XAI_API_KEY="your-key"
+python3 test_live_api.py
+
+# Or run detailed diagnostics
+python3 test_api_detailed.py
 ```
 
 ### Run Your First Dialogue

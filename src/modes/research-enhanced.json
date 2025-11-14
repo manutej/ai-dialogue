@@ -1,0 +1,61 @@
+{
+  "name": "research-enhanced",
+  "description": "Enhanced research mode with files, collections, and server-side tools",
+  "structure": "sequential",
+  "turns": 6,
+  "metadata": {
+    "use_case": "Deep research combining knowledge base, web search, and document analysis",
+    "features": ["collections", "files", "server_side_tools"],
+    "version": "2.0"
+  },
+  "prompts": {
+    "turn_1": {
+      "role": "knowledge_search",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "collections": [],
+      "template": "Search our internal knowledge base for existing information about: {topic}. Summarize key findings.",
+      "context_from": [],
+      "note": "Set collections array in runtime based on available collections"
+    },
+    "turn_2": {
+      "role": "web_research",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "server_side_tools": ["web_search"],
+      "template": "Based on internal knowledge:\n\n{turn_1}\n\nNow search the web for the LATEST developments and research on: {topic}\n\nFocus on information from the past 6 months.",
+      "context_from": [1]
+    },
+    "turn_3": {
+      "role": "social_sentiment",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "server_side_tools": ["x_search"],
+      "template": "Analyze social sentiment and expert discussions on X (Twitter) about: {topic}\n\nPrevious findings:\n\nInternal: {turn_1}\n\nWeb: {turn_2}\n\nProvide sentiment analysis and trending perspectives.",
+      "context_from": [1, 2]
+    },
+    "turn_4": {
+      "role": "document_analysis",
+      "participant": "grok",
+      "grok_model": "grok-4",
+      "files": [],
+      "template": "Review the provided documents related to {topic}.\n\nContext from research:\n{turn_2}\n\nExtract key information, data points, and insights from the documents.",
+      "context_from": [2],
+      "note": "Set files array in runtime based on available documents"
+    },
+    "turn_5": {
+      "role": "synthesis",
+      "participant": "claude",
+      "template": "Synthesize comprehensive research on: {topic}\n\nKnowledge Base Search:\n{turn_1}\n\nWeb Research:\n{turn_2}\n\nSocial Sentiment:\n{turn_3}\n\nDocument Analysis:\n{turn_4}\n\nProvide:\n1. Executive Summary\n2. Key Findings\n3. Trend Analysis\n4. Areas of Consensus\n5. Conflicting Information\n6. Gaps in Knowledge",
+      "context_from": [1, 2, 3, 4]
+    },
+    "turn_6": {
+      "role": "quantitative_analysis",
+      "participant": "grok",
+      "grok_model": "grok-4-fast",
+      "server_side_tools": ["code_execution"],
+      "template": "Perform quantitative analysis on the research findings for: {topic}\n\nSynthesis:\n{turn_5}\n\nTasks:\n1. Extract numerical data and metrics\n2. Calculate growth rates or trends\n3. Identify statistical patterns\n4. Create data visualizations (describe them)\n5. Generate quantitative insights\n\nUse Python code execution for calculations.",
+      "context_from": [5]
+    }
+  }
+}
