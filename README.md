@@ -385,11 +385,17 @@ Vision (Grok 2):
 
 ## 📚 Documentation
 
-- **[API Reference](docs/API.md)**: Detailed API documentation
-- **[Orchestration Modes](docs/MODES.md)**: Guide to all orchestration patterns
-- **[Cost Optimization](docs/COST-OPTIMIZATION.md)**: Strategies to minimize costs
+- **[Command Reference](utils/grok-commands/README.md)**: `/grok` command documentation and usage guide
 - **[Test Reports](tests/grok-commands/results/)**: Comprehensive test results with cost analysis
-- **[Command Reference](utils/grok-commands/README.md)**: `/grok` command documentation
+- **[Testing Guide](docs/TESTING-GUIDE.md)**: Testing strategies and guidelines
+- **[Grok Quick Reference](docs/GROK-QUICK-REFERENCE.md)**: Quick reference for Grok API features
+- **[Migration Guide](docs/MIGRATION-GUIDE.md)**: Upgrading and migration instructions
+- **[Roadmap](docs/ROADMAP.md)**: Project roadmap and future plans
+
+**In This README:**
+- Orchestration Modes: See [Usage](#-usage) section above
+- Cost Analysis: See [Cost Analysis](#-cost-analysis) section above
+- API Examples: See [Usage](#-usage) and [Quick Start](#-quick-start) sections
 
 ---
 
