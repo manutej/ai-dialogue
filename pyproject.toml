@@ -23,29 +23,29 @@ classifiers = [
 ]
 
 dependencies = [
-    "openai>=1.0.0",  # For Grok API (OpenAI-compatible)
-    "langchain-openai>=0.3.0",  # LangChain integration for model adapters
-    "langchain-core>=0.3.0",  # LangChain core abstractions
-    "click>=8.0.0",   # CLI framework
-    "aiohttp>=3.9.0", # Async HTTP (used by openai)
+    "openai>=1.0.0,<3.0.0",  # For Grok API (OpenAI-compatible)
+    "langchain-openai>=0.3.0,<1.0.0",  # LangChain integration for model adapters
+    "langchain-core>=0.3.0,<1.0.0",  # LangChain core abstractions
+    "click>=8.0.0,<9.0.0",   # CLI framework
+    "aiohttp>=3.9.0,<4.0.0", # Async HTTP (used by openai)
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.0.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
+    "pytest>=7.0.0,<9.0.0",
+    "pytest-asyncio>=0.21.0,<1.0.0",
+    "pytest-cov>=4.0.0,<6.0.0",
+    "black>=23.0.0,<25.0.0",
+    "ruff>=0.1.0,<1.0.0",
 ]
 
 [project.scripts]
 ai-dialogue = "cli:cli"
 
 [project.urls]
-Homepage = "https://github.com/luxor-ai/ai-dialogue"
-Repository = "https://github.com/luxor-ai/ai-dialogue"
-Documentation = "https://github.com/luxor-ai/ai-dialogue#readme"
+Homepage = "https://github.com/manutej/ai-dialogue"
+Repository = "https://github.com/manutej/ai-dialogue"
+Documentation = "https://github.com/manutej/ai-dialogue#readme"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -102,7 +102,7 @@ Three powerful Claude Code slash commands for Grok API integration:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ai-dialogue.git
+git clone https://github.com/manutej/ai-dialogue.git
 cd ai-dialogue
 
 # Create virtual environment
@@ -473,8 +473,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ai-dialogue/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-dialogue/discussions)
+- **Issues**: [GitHub Issues](https://github.com/manutej/ai-dialogue/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/manutej/ai-dialogue/discussions)
 - **Documentation**: [Project Docs](docs/)
 
 ---
