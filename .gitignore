@@ -51,3 +51,10 @@ tests/**/results/*.log
 # Environment variables
 .env
 .env.local
+
+# Local analysis and planning files
+docs/project-history/NOUS.md
+docs/project-history/PRODUCTION_CHECKLIST.md
+docs/project-history/PUBLIC-SHARING-READINESS-ANALYSIS.md
+docs/project-history/QUICK-FIX-CHECKLIST.md
+docs/project-history/LAUNCH-READINESS-SUMMARY.md
