@@ -45,6 +45,8 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+tests/grok-commands/results/*.log
+tests/**/results/*.log
 
 # Environment variables
 .env
