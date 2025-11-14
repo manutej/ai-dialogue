@@ -1,19 +1,18 @@
 # xAI API Billing Troubleshooting
 
-## Current Status
+## Current Status (Updated 2025-11-14)
 
-**Problem**: Both API keys return `403 Forbidden` even after billing was added.
+**Problem**: API keys still return `403 Forbidden` even after billing was added.
 
-**API Keys Tested**:
-- Key #1: `xai-mIdtRcQdGsR...qUF0gswuwj` ❌ 403 Forbidden
-- Key #2: `xai-ycZ0mlvhIwn...0mQjhpoFpA` ❌ 403 Forbidden
+**Latest Test Results**:
+- Key: `xai-iQNMFpwsYHj...7Nom3O7I14` ❌ 403 Forbidden
+- Tested with official models:
+  - `grok-4-fast-reasoning-latest` ❌
+  - `grok-code-fast-1` ❌
+  - `grok-4-fast-non-reasoning-latest` ❌
+- Tested with both LangChain AND direct curl ❌
 
-**Models Tested**:
-- `grok-2-latest` ❌
-- `grok-2` ❌
-- `grok-beta` ❌
-
-All return the same error: `PermissionDeniedError: Access denied`
+**Diagnosis**: 403 errors persist across all models and both Python and direct HTTP requests, confirming this is an API key/billing issue, not a code issue.
 
 ---
 
