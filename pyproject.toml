@@ -24,6 +24,8 @@ classifiers = [
 
 dependencies = [
     "openai>=1.0.0",  # For Grok API (OpenAI-compatible)
+    "langchain-openai>=0.3.0",  # LangChain integration for model adapters
+    "langchain-core>=0.3.0",  # LangChain core abstractions
     "click>=8.0.0",   # CLI framework
     "aiohttp>=3.9.0", # Async HTTP (used by openai)
 ]
