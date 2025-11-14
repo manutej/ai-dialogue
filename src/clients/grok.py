@@ -11,12 +11,20 @@ from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
-# Model ID mapping: friendly name -> actual API model ID
+# Model ID mapping - VERIFIED via Context7 research (2025-01-13)
+# Note: grok-4-0709 does NOT exist in xAI API
 MODEL_IDS = {
-    # Primary models (with version suffixes)
-    "grok-4": "grok-4-0709",
-    "grok-4-0709": "grok-4-0709",
+    # Grok 4 models
+    "grok-4": "grok-4",
+    "grok-4-fast": "grok-4-fast",
+
+    # Grok 3 models
     "grok-3": "grok-3",
+    "grok-3-latest": "grok-3-latest",
+
+    # Grok 2 models (recommended default - most accessible)
+    "grok-2": "grok-2-latest",
+    "grok-2-latest": "grok-2-latest",
 
     # Vision models
     "grok-vision": "grok-2-vision-1212",

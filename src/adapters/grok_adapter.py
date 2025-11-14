@@ -10,13 +10,27 @@ from langchain_openai import ChatOpenAI
 from .base import BaseAdapter, TokenUsage
 
 
-# Model ID mapping (from existing grok.py)
+# Model ID mapping - VERIFIED via Context7 research (2025-01-13)
+# Note: grok-4-0709 does NOT exist in xAI API (common misconception)
 MODEL_IDS = {
-    "grok-4": "grok-4-0709",
-    "grok-4-0709": "grok-4-0709",
-    "grok-3": "grok-3",
+    # Grok 4 models (current generation)
+    "grok-4": "grok-4",  # Direct alias to latest stable
+    "grok-4-fast": "grok-4-fast",  # Cost-efficient reasoning
+
+    # Grok 3 models
+    "grok-3": "grok-3",  # Alias to latest stable
+    "grok-3-latest": "grok-3-latest",
+
+    # Grok 2 models (recommended default - widely accessible)
+    "grok-2": "grok-2-latest",  # Recommended: most stable
+    "grok-2-latest": "grok-2-latest",
+
+    # Vision models
     "grok-vision": "grok-2-vision-1212",
+    "grok-2-vision": "grok-2-vision-1212",
     "grok-2-vision-1212": "grok-2-vision-1212",
+
+    # Image generation
     "grok-image": "grok-2-image",
     "grok-2-image": "grok-2-image",
 }
@@ -34,7 +48,7 @@ class GrokAdapter(BaseAdapter):
     def __init__(
         self,
         api_key: str = None,
-        model: str = "grok-4",
+        model: str = "grok-2",  # Default to grok-2 (most accessible)
         temperature: float = 0.7
     ):
         """
