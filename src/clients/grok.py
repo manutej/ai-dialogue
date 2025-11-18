@@ -12,7 +12,8 @@ from openai import AsyncOpenAI
 logger = logging.getLogger(__name__)
 
 # Model ID mapping - Official xAI model identifiers (docs.x.ai/docs/models)
-# Updated: 2025-11-14 per user guidance
+# Updated: 2025-11-18 - Note: Grok 4.1 announced (Nov 2025)
+# TODO: Update to grok-4-1-* identifiers when xAI releases them in the API
 # NOTE: Grok-2 models are ONLY for vision/image, NOT for text generation
 MODEL_IDS = {
     # ===== TEXT GENERATION MODELS (Grok 4) =====
@@ -54,8 +55,9 @@ class GrokClient:
     Uses OpenAI SDK with XAI endpoint for compatibility
 
     Supported models:
-    - grok-4 (alias for grok-4-0709) - Latest Grok model
-    - grok-3 - Previous generation
+    - grok-4 - Latest Grok model (will upgrade to grok-4-1 when API available)
+    - grok-4-fast-reasoning-latest - Recommended for most tasks
+    - grok-4-fast-non-reasoning-latest - Faster for simpler tasks
     - grok-vision - Multimodal vision model
     - grok-image - Image generation
     """

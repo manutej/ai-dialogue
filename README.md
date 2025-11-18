@@ -284,8 +284,9 @@ GROK_MAX_TOKENS=4096
 ### Model Options
 
 ```
-Text Generation (Grok 4):
+Text Generation (Grok 4 / 4.1):
 ├─ grok-4-fast-reasoning-latest  ← Recommended (best balance)
+│  Note: Will upgrade to grok-4-1 when API available (announced Nov 2025)
 ├─ grok-4-fast-non-reasoning-latest (faster, simpler tasks)
 └─ grok-code-fast-1 (code-specialized, 43% more expensive)
 
@@ -295,6 +296,7 @@ Vision (Grok 2):
 ```
 
 **Recommendation**: Use default `grok-4-fast-reasoning` for most tasks.
+**Status**: Ready for Grok 4.1 API upgrade when xAI releases new identifiers.
 
 <br>
 
