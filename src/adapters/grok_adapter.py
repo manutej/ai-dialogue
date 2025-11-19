@@ -11,7 +11,14 @@ from .base import BaseAdapter, TokenUsage
 
 
 # Model ID mapping - Official xAI model identifiers (docs.x.ai/docs/models)
-# Updated: 2025-11-14 per user guidance
+# Updated: 2025-11-19 - Verified against official xAI API documentation
+#
+# GROK 4.1 STATUS (as of Nov 19, 2025):
+# - Grok 4.1 released on consumer platforms (Nov 17-18, 2025)
+# - NOT yet available via xAI API (awaiting official API release)
+# - Will auto-upgrade when xAI releases API access
+# - See: https://x.ai/news/grok-4-1
+#
 # NOTE: Grok-2 models are ONLY for vision/image, NOT for text generation
 MODEL_IDS = {
     # ===== TEXT GENERATION MODELS (Grok 4) =====
