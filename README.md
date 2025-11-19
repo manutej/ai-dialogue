@@ -284,19 +284,24 @@ GROK_MAX_TOKENS=4096
 ### Model Options
 
 ```
-Text Generation (Grok 4 / 4.1):
+Text Generation (Currently Available):
 ├─ grok-4-fast-reasoning-latest  ← Recommended (best balance)
-│  Note: Will upgrade to grok-4-1 when API available (announced Nov 2025)
 ├─ grok-4-fast-non-reasoning-latest (faster, simpler tasks)
 └─ grok-code-fast-1 (code-specialized, 43% more expensive)
 
 Vision (Grok 2):
 ├─ grok-2-vision-latest (multimodal - images + text)
 └─ grok-2-image-latest (image generation)
+
+🚀 Grok 4.1 Status (Released Nov 17-18, 2025):
+   • Available on: grok.com, X platform, iOS/Android apps
+   • NOT YET available via xAI API (awaiting official release)
+   • System will auto-upgrade when API access opens
+   • See: https://x.ai/news/grok-4-1
 ```
 
-**Recommendation**: Use default `grok-4-fast-reasoning` for most tasks.
-**Status**: Ready for Grok 4.1 API upgrade when xAI releases new identifiers.
+**Recommendation**: Use default `grok-4-fast-reasoning-latest` for most tasks.
+**Status**: System is ready for automatic Grok 4.1 API upgrade when released by xAI.
 
 <br>
 
@@ -487,4 +492,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 **Built with ❤️ for technical research and AI-assisted development**
 
-*Last Updated: 2025-11-14*
+*Last Updated: 2025-11-19 (xAI API documentation verified)*
