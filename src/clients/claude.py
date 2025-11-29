@@ -46,19 +46,18 @@ class ClaudeClient:
         logger.debug(f"Claude request: model={self.model}, temp={temp}")
 
         try:
-            # Create subprocess
+            # Create subprocess - pass prompt via stdin
             proc = await asyncio.create_subprocess_exec(
                 "claude",
-                "--model", self.model,
-                "--prompt", prompt,
+                stdin=asyncio.subprocess.PIPE,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
 
-            # Wait for completion with timeout
+            # Wait for completion with timeout, send prompt via stdin
             try:
                 stdout, stderr = await asyncio.wait_for(
-                    proc.communicate(),
+                    proc.communicate(input=prompt.encode()),
                     timeout=300  # 5 minutes max
                 )
             except asyncio.TimeoutError:
