@@ -131,7 +131,7 @@ class ProtocolEngine:
         grok_client,
         state_manager,
         max_retries: int = 3,
-        timeout_seconds: int = 30,
+        timeout_seconds: int = 120,
         retry_backoff_base: float = 2.0
     ):
         self.claude = claude_client
