@@ -11,9 +11,9 @@ from src.clients.grok import GrokClient, MODEL_IDS
 
 def test_model_id_mapping():
     """Test that model ID mapping works correctly"""
-    assert MODEL_IDS["grok-4"] == "grok-4-0709"
-    assert MODEL_IDS["grok-3"] == "grok-3"
-    assert MODEL_IDS["grok-vision"] == "grok-2-vision-1212"
+    assert MODEL_IDS["grok-4"] == "grok-4-fast-reasoning-latest"
+    assert MODEL_IDS["grok-vision"] == "grok-2-vision-latest"
+    assert MODEL_IDS["grok-code"] == "grok-code-fast-1"
 
 
 def test_grok_client_init():
@@ -22,7 +22,7 @@ def test_grok_client_init():
         # This will fail if XAI_API_KEY is not set, which is expected
         client = GrokClient(api_key="test-key", model="grok-4")
         assert client.default_model == "grok-4"
-        assert client._resolve_model("grok-4") == "grok-4-0709"
+        assert client._resolve_model("grok-4") == "grok-4-fast-reasoning-latest"
     except ValueError as e:
         # Expected if no API key
         pass
@@ -33,12 +33,12 @@ def test_model_resolution():
     client = GrokClient(api_key="test-key", model="grok-4")
 
     # Test known models
-    assert client._resolve_model("grok-4") == "grok-4-0709"
-    assert client._resolve_model("grok-3") == "grok-3"
-    assert client._resolve_model("grok-vision") == "grok-2-vision-1212"
+    assert client._resolve_model("grok-4") == "grok-4-fast-reasoning-latest"
+    assert client._resolve_model("grok-vision") == "grok-2-vision-latest"
+    assert client._resolve_model("grok-code") == "grok-code-fast-1"
 
-    # Test already-resolved model
-    assert client._resolve_model("grok-4-0709") == "grok-4-0709"
+    # Test already-resolved model (passes through unknown models)
+    assert client._resolve_model("grok-4-fast-reasoning-latest") == "grok-4-fast-reasoning-latest"
 
 
 @pytest.mark.asyncio

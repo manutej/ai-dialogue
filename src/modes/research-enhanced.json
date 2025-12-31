@@ -3,6 +3,7 @@
   "description": "Enhanced research mode with files, collections, and server-side tools",
   "structure": "sequential",
   "turns": 6,
+  "participants": ["claude", "grok"],
   "metadata": {
     "use_case": "Deep research combining knowledge base, web search, and document analysis",
     "features": ["collections", "files", "server_side_tools"],
